@@ -1,9 +1,33 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Uploader from './components/Uploader';
 import Viewer from './components/Viewer';
 import './index.css';
 
 export default function App() {
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('megabin_pro_pass') === 'SAMSUNG-PRO') {
+      setIsPro(true);
+    }
+  }, []);
+
+  const handleProUnlock = () => {
+    if (isPro) {
+      alert("✅ MegaBin Pro is already active!");
+      return;
+    }
+    const pass = window.prompt("Enter Pro Passcode (Hint: SAMSUNG-PRO):");
+    if (pass === 'SAMSUNG-PRO') {
+      localStorage.setItem('megabin_pro_pass', 'SAMSUNG-PRO');
+      setIsPro(true);
+      alert("🎉 MegaBin Pro Unlocked!\nEnjoy Burner Domains, 5GB Chunking, and Persistent Storage.");
+    } else if (pass) {
+      alert("❌ Invalid Passcode. Please contact founders@gridspeed.pro for access.");
+    }
+  };
+
   return (
     <Router>
       <div className="container" style={{ position: 'relative', paddingTop: '6rem' }}>
@@ -18,17 +42,17 @@ export default function App() {
           </div>
           
           <button 
-            onClick={() => alert("🎉 MegaBin Pro Waitlist\n\nTired of getting domains flagged by Corporate DLP?\n\nPro Features:\n- 🛡️ Dedicated, rotating 'Burner Domains' to endlessly evade blacklists\n- 🚀 Up to 5GB chunked file loads\n- ⏰ Permanent Storage Pinning\n\nShoot an email to founders@gridspeed.pro to request immediate early access!")} 
+            onClick={handleProUnlock} 
             className="btn-primary"
-            style={{ padding: '0.6rem 1.2rem', background: 'linear-gradient(to right, #10b981, #06b6d4)', border: 'none', borderRadius: '24px', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}
+            style={{ padding: '0.6rem 1.2rem', background: isPro ? 'linear-gradient(to right, #fbbf24, #f59e0b)' : 'linear-gradient(to right, #10b981, #06b6d4)', color: isPro ? '#000' : '#fff', border: 'none', borderRadius: '24px', boxShadow: isPro ? '0 4px 15px rgba(245, 158, 11, 0.4)' : '0 4px 15px rgba(16, 185, 129, 0.3)' }}
           >
-            🚀 Unlock Pro
+            {isPro ? '👑 PRO ACTIVE' : '🚀 Unlock Pro'}
           </button>
         </header>
 
         <main className="fade-in-up" style={{ animationDelay: '0.1s' }}>
           <Routes>
-            <Route path="/" element={<Uploader />} />
+            <Route path="/" element={<Uploader isPro={isPro} />} />
             <Route path="/:shortId" element={<Viewer />} />
           </Routes>
         </main>

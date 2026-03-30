@@ -1,12 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, CheckCircle, Copy, AlertCircle, Shield } from 'lucide-react';
+import { UploadCloud, CheckCircle, Copy, AlertCircle, Shield, Pin, Globe } from 'lucide-react';
 import { uploadFile } from '../utils/upload';
 import { generateEncryptionKey, importEncryptionKey, encryptFileToTextBlob } from '../utils/crypto';
 
-export default function Uploader() {
+export default function Uploader({ isPro }) {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [useEncryption, setUseEncryption] = useState(false);
+  const [pinFile, setPinFile] = useState(false);
+  const [useBurner, setUseBurner] = useState(false);
+  const [burnerHost, setBurnerHost] = useState('');
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -42,10 +45,9 @@ export default function Uploader() {
   const handleUpload = async () => {
     if (!file) return;
     
-    // Check max size (100MB)
-    const MAX_SIZE = 100 * 1024 * 1024;
+    const MAX_SIZE = isPro ? 5000 * 1024 * 1024 : 100 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      setError('File exceeds the 100MB limits.');
+      setError(`File exceeds the ${isPro ? '5GB' : '100MB'} limit.`);
       return;
     }
 
@@ -75,7 +77,14 @@ export default function Uploader() {
 
       const data = await uploadFile(uploadableFile, originalMeta, (perc) => {
         setProgress(perc);
-      });
+      }, { pinFile });
+      
+      if (isPro && useBurner) {
+        setBurnerHost(`https://b-${Math.random().toString(36).substring(2,6)}.gridspeed.pro`);
+      } else {
+        setBurnerHost(window.location.origin);
+      }
+      
       setResult(data);
     } catch (err) {
       console.error(err);
@@ -86,7 +95,7 @@ export default function Uploader() {
   };
 
   const copyLink = () => {
-    const link = `${window.location.origin}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`;
+    const link = `${burnerHost}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`;
     navigator.clipboard.writeText(link);
     alert('Link copied to clipboard!');
   };
@@ -104,7 +113,7 @@ export default function Uploader() {
           <input 
             type="text" 
             className="input-base" 
-            value={`${window.location.origin}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`} 
+            value={`${burnerHost}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`} 
             readOnly 
           />
           <button className="btn-primary" onClick={copyLink} style={{ flexShrink: 0 }}>
@@ -153,20 +162,48 @@ export default function Uploader() {
         ) : (
           <div>
             <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Drag & drop a file here</h3>
-            <p style={{ fontSize: '1.1rem' }}>or click to browse (Max 100MB)</p>
+            <p style={{ fontSize: '1.1rem' }}>or click to browse (Max {isPro ? '5GB' : '100MB'})</p>
           </div>
         )}
       </div>
 
-      <div style={{ marginTop: '1.5rem', padding: '1rem', background: useEncryption ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
-        <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
-        <div style={{ flex: 1 }}>
-          <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>Encrypts file in the browser and uploads as text to evade Deep Packet Inspection.</p>
+      <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ padding: '1rem', background: useEncryption ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
+          <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
+            <p style={{ margin: 0, fontSize: '0.85rem' }}>Encrypts file in the browser and uploads as text to evade Deep Packet Inspection.</p>
+          </div>
+          <div>
+            <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)' }} />
+          </div>
         </div>
-        <div>
-          <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)' }} />
-        </div>
+
+        {isPro && (
+          <>
+            <div style={{ padding: '1rem', background: pinFile ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setPinFile(!pinFile)}>
+              <Pin size={24} color={pinFile ? "#f59e0b" : "var(--text-secondary)"} />
+              <div style={{ flex: 1 }}>
+                <h4 style={{ margin: 0, color: pinFile ? "#f59e0b" : "var(--text-primary)" }}>Permanent Pinning</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem' }}>Retains the original file securely indefinitely rather than auto-deleting after 7 days.</p>
+              </div>
+              <div>
+                <input type="checkbox" checked={pinFile} readOnly style={{ transform: 'scale(1.2)', accentColor: '#f59e0b' }} />
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', background: useBurner ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseBurner(!useBurner)}>
+              <Globe size={24} color={useBurner ? "#f59e0b" : "var(--text-secondary)"} />
+              <div style={{ flex: 1 }}>
+                <h4 style={{ margin: 0, color: useBurner ? "#f59e0b" : "var(--text-primary)" }}>Burner Domain Routing</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem' }}>Generates a one-off temporary "Ghost" domain URL highly immune to enterprise DNS blocking.</p>
+              </div>
+              <div>
+                <input type="checkbox" checked={useBurner} readOnly style={{ transform: 'scale(1.2)', accentColor: '#f59e0b' }} />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {error && (

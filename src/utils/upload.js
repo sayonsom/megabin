@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase';
 import * as tus from 'tus-js-client';
 import { generateShortId } from './hash';
 
-export async function uploadFile(file, originalMeta, onProgress) {
+export async function uploadFile(file, originalMeta, onProgress, options = {}) {
   return new Promise(async (resolve, reject) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -40,8 +40,12 @@ export async function uploadFile(file, originalMeta, onProgress) {
         onSuccess: async function () {
           const storagePath = `${shortId}-${ufileName}`;
           
-          const expiresAt = new Date();
-          expiresAt.setDate(expiresAt.getDate() + 7);
+          let expiresAt = new Date();
+          if (options.pinFile) {
+            expiresAt.setFullYear(expiresAt.getFullYear() + 100);
+          } else {
+            expiresAt.setDate(expiresAt.getDate() + 7);
+          }
 
           const { data, error } = await supabase
             .from('files')
