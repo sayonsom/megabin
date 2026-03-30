@@ -155,6 +155,17 @@ export default function Viewer() {
           </button>
         </div>
       )}
+
+      {/* VIRAL HOOK: The Encrypted Reply CTA */}
+      <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--surface-border)', textAlign: 'center' }}>
+        <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '1.2rem' }}>
+          Did this secure transfer save your life? Send an impenetrable reply instantly.
+        </p>
+        <Link to="/" className="btn-secondary" style={{ display: 'inline-flex', padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.05)' }}>
+          <ShieldCheck size={20} style={{ color: 'var(--success-color)' }} />
+          <span>Send an Encrypted Reply Payload</span>
+        </Link>
+      </div>
     </div>
   );
 }
