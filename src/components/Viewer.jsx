@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Download, FileText, AlertTriangle, Loader2 } from 'lucide-react';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import { Download, FileText, AlertTriangle, Loader2, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { importEncryptionKey, decryptTextBlobToFile } from '../utils/crypto';
 
 export default function Viewer() {
   const { shortId } = useParams();
+  const location = useLocation();
+  const hashKey = location.hash ? location.hash.slice(1) : null;
+  
   const [fileMeta, setFileMeta] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [textContent, setTextContent] = useState(null);
+  const [decryptedBlobUrl, setDecryptedBlobUrl] = useState(null);
 
   useEffect(() => {
     async function fetchFile() {
@@ -24,17 +29,30 @@ export default function Viewer() {
 
         setFileMeta(data);
 
-        // Check if it's text and under 1MB to render inline
+        // Fetch the file contents directly if it's text OR if it's encrypted (since we must decrypt to render/download)
         const isText = data.mime_type?.startsWith('text/');
-        if (isText && data.size_bytes < 1024 * 1024) {
-          const { data: fileData, error: downloadError } = await supabase
-            .storage
-            .from('megabin-uploads')
-            .download(data.storage_path);
-            
-          if (!downloadError && fileData) {
-            const text = await fileData.text();
-            setTextContent(text);
+        const shouldFetchInline = (isText && data.size_bytes < 1024 * 1024) || hashKey;
+
+        if (shouldFetchInline) {
+          const { data: publicUrlData } = supabase.storage.from('megabin-uploads').getPublicUrl(data.storage_path);
+          
+          if (hashKey) {
+             const key = await importEncryptionKey(hashKey);
+             const resp = await fetch(publicUrlData.publicUrl);
+             if (!resp.ok) throw new Error("Failed to fetch public URL backing");
+             const textDataUrl = await resp.text();
+             
+             const decryptedBlob = await decryptTextBlobToFile(textDataUrl, key, data.mime_type);
+             setDecryptedBlobUrl(URL.createObjectURL(decryptedBlob));
+
+             if (isText && data.size_bytes < 1024 * 1024) {
+                const text = await decryptedBlob.text();
+                setTextContent(text);
+             }
+          } else if (isText) {
+             const resp = await fetch(publicUrlData.publicUrl);
+             const text = await resp.text();
+             setTextContent(text);
           }
         }
       } catch (err) {
@@ -48,14 +66,27 @@ export default function Viewer() {
     if (shortId) {
       fetchFile();
     }
-  }, [shortId]);
+    
+    return () => {
+       if (decryptedBlobUrl) URL.revokeObjectURL(decryptedBlobUrl);
+    };
+  }, [shortId, hashKey]);
 
   const handleDownload = async () => {
     if (!fileMeta) return;
     try {
-      // Get config, public URLs usually sufficient unless private
+      if (decryptedBlobUrl) {
+         const a = document.createElement('a');
+         a.href = decryptedBlobUrl;
+         a.download = fileMeta.original_name;
+         document.body.appendChild(a);
+         a.click();
+         document.body.removeChild(a);
+         return;
+      }
+
+      // Standard public download
       const { data } = supabase.storage.from('megabin-uploads').getPublicUrl(fileMeta.storage_path);
-      
       const a = document.createElement('a');
       a.href = data.publicUrl;
       a.download = fileMeta.original_name;
@@ -90,15 +121,16 @@ export default function Viewer() {
   return (
     <div className="glass-panel fade-in-up" style={{ padding: '2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', borderBottom: '1px solid var(--surface-border)', paddingBottom: '2rem' }}>
-        <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1.2rem', borderRadius: '16px' }}>
+        <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1.2rem', borderRadius: '16px', position: 'relative' }}>
           <FileText size={40} className="title-gradient" />
+          {hashKey && <ShieldCheck size={20} color="var(--success-color)" style={{ position: 'absolute', bottom: '-4px', right: '-4px', background: 'var(--bg-color)', borderRadius: '50%' }} />}
         </div>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <h2 style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0, fontSize: '1.8rem', marginBottom: '0.5rem' }}>
+          <h2 style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0, fontSize: '1.8rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {fileMeta.original_name}
           </h2>
-          <p style={{ margin: 0, fontSize: '1rem' }}>
-            {(fileMeta.size_bytes / 1024).toFixed(2)} KB • Expires {new Date(fileMeta.expires_at).toLocaleDateString()}
+          <p style={{ margin: 0, fontSize: '1rem', color: hashKey ? 'var(--success-color)' : 'var(--text-secondary)' }}>
+            {(fileMeta.size_bytes / 1024).toFixed(2)} KB • Expires {new Date(fileMeta.expires_at).toLocaleDateString()} {hashKey && '• E2E Encrypted'}
           </p>
         </div>
         <button className="btn-primary" onClick={handleDownload} style={{ padding: '0.8rem 1.5rem' }}>
@@ -115,7 +147,9 @@ export default function Viewer() {
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
-          <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>This file is either a binary or too large to preview inline.</p>
+          <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+            This file is either a binary or too large to preview inline. {hashKey && 'It has been successfully decrypted locally.'}
+          </p>
           <button className="btn-secondary" onClick={handleDownload}>
             Download File to View
           </button>

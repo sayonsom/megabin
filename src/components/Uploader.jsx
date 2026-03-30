@@ -1,13 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, CheckCircle, Copy, AlertCircle } from 'lucide-react';
+import { UploadCloud, CheckCircle, Copy, AlertCircle, Shield } from 'lucide-react';
 import { uploadFile } from '../utils/upload';
+import { generateEncryptionKey, importEncryptionKey, encryptFileToTextBlob } from '../utils/crypto';
 
 export default function Uploader() {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [useEncryption, setUseEncryption] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [generatedKey, setGeneratedKey] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -49,9 +52,28 @@ export default function Uploader() {
     setIsUploading(true);
     setProgress(0);
     setError(null);
+    setGeneratedKey(null);
 
     try {
-      const data = await uploadFile(file, (perc) => {
+      let uploadableFile = file;
+      let keyStr = null;
+
+      if (useEncryption) {
+        keyStr = await generateEncryptionKey();
+        const cryptoKey = await importEncryptionKey(keyStr);
+        const textBlob = await encryptFileToTextBlob(file, cryptoKey);
+        // Build an actual File object from the blob
+        uploadableFile = new File([textBlob], file.name + '.enc.txt', { type: 'text/plain' });
+        setGeneratedKey(keyStr);
+      }
+
+      const originalMeta = {
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        size: file.size
+      };
+
+      const data = await uploadFile(uploadableFile, originalMeta, (perc) => {
         setProgress(perc);
       });
       setResult(data);
@@ -64,7 +86,7 @@ export default function Uploader() {
   };
 
   const copyLink = () => {
-    const link = `${window.location.origin}/${result.short_id}`;
+    const link = `${window.location.origin}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`;
     navigator.clipboard.writeText(link);
     alert('Link copied to clipboard!');
   };
@@ -74,13 +96,15 @@ export default function Uploader() {
       <div className="glass-panel" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
         <CheckCircle size={64} className="title-gradient file-icon-bounce" style={{ margin: '0 auto 1.5rem', color: 'var(--success-color)' }} />
         <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Upload Complete!</h2>
-        <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>Your file is ready to share.</p>
+        <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>
+           Your file is ready to share. {generatedKey && <strong style={{color:'var(--success-color)'}}><br/>Secured with End-to-End Encryption.</strong>}
+        </p>
         
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem' }}>
           <input 
             type="text" 
             className="input-base" 
-            value={`${window.location.origin}/${result.short_id}`} 
+            value={`${window.location.origin}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`} 
             readOnly 
           />
           <button className="btn-primary" onClick={copyLink} style={{ flexShrink: 0 }}>
@@ -89,7 +113,13 @@ export default function Uploader() {
           </button>
         </div>
         
-        <button className="btn-secondary" onClick={() => { setResult(null); setFile(null); setProgress(0); }}>
+        {generatedKey && (
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+            Warning: Do not lose this link. It contains the decryption key. The server cannot recover your file if the key is lost.
+          </p>
+        )}
+
+        <button className="btn-secondary" onClick={() => { setResult(null); setFile(null); setProgress(0); setGeneratedKey(null); }}>
           Upload Another File
         </button>
       </div>
@@ -126,6 +156,17 @@ export default function Uploader() {
             <p style={{ fontSize: '1.1rem' }}>or click to browse (Max 100MB)</p>
           </div>
         )}
+      </div>
+
+      <div style={{ marginTop: '1.5rem', padding: '1rem', background: useEncryption ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
+        <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
+        <div style={{ flex: 1 }}>
+          <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
+          <p style={{ margin: 0, fontSize: '0.85rem' }}>Encrypts file in the browser and uploads as text to evade Deep Packet Inspection.</p>
+        </div>
+        <div>
+          <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)' }} />
+        </div>
       </div>
 
       {error && (

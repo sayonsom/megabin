@@ -2,13 +2,17 @@ import { supabase } from '../lib/supabase';
 import * as tus from 'tus-js-client';
 import { generateShortId } from './hash';
 
-export async function uploadFile(file, onProgress) {
+export async function uploadFile(file, originalMeta, onProgress) {
   return new Promise(async (resolve, reject) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const shortId = generateShortId(6);
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-project-id.supabase.co';
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+      
+      const ufileName = originalMeta?.name || file.name || 'upload.bin';
+      const ufileType = originalMeta?.type || file.type || 'application/octet-stream';
+      const ufileSize = originalMeta?.size || file.size;
       
       const upload = new tus.Upload(file, {
         endpoint: `${supabaseUrl}/storage/v1/upload/resumable`,
@@ -21,7 +25,7 @@ export async function uploadFile(file, onProgress) {
         removeFingerprintOnSuccess: true, 
         metadata: {
           bucketName: 'megabin-uploads',
-          objectName: `${shortId}-${file.name}`,
+          objectName: `${shortId}-${ufileName}`,
           contentType: file.type || 'application/octet-stream',
           cacheControl: '3600',
         },
@@ -34,10 +38,8 @@ export async function uploadFile(file, onProgress) {
           if (onProgress) onProgress(percentage);
         },
         onSuccess: async function () {
-          // Upload to storage complete, now create metadata record
-          const storagePath = `${shortId}-${file.name}`;
+          const storagePath = `${shortId}-${ufileName}`;
           
-          // Expiration in 7 days by default
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + 7);
 
@@ -46,9 +48,9 @@ export async function uploadFile(file, onProgress) {
             .insert([
               {
                 short_id: shortId,
-                original_name: file.name,
-                mime_type: file.type || 'application/octet-stream',
-                size_bytes: file.size,
+                original_name: ufileName,
+                mime_type: ufileType,
+                size_bytes: ufileSize,
                 storage_path: storagePath,
                 expires_at: expiresAt.toISOString(),
               }
@@ -64,7 +66,6 @@ export async function uploadFile(file, onProgress) {
         },
       });
 
-      // Check if there are any previous uploads to continue.
       upload.findPreviousUploads().then(function (previousUploads) {
         if (previousUploads.length) {
           upload.resumeFromPreviousUpload(previousUploads[0]);
