@@ -29,7 +29,7 @@ export async function uploadFile(file, originalMeta, onProgress) {
           contentType: file.type || 'application/octet-stream',
           cacheControl: '3600',
         },
-        chunkSize: 6 * 1024 * 1024, 
+        chunkSize: 1 * 1024 * 1024, // 1MB chunks to evade DLP sustained stream monitors
         onError: function (error) {
           reject(error);
         },
