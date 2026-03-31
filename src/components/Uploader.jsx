@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, CheckCircle, Copy, AlertCircle, Shield, Pin, Globe } from 'lucide-react';
-import { uploadFile } from '../utils/upload';
+import { uploadFile, uploadFileStealth } from '../utils/upload';
 import { generateEncryptionKey, importEncryptionKey, encryptFileToTextBlob } from '../utils/crypto';
 
 export default function Uploader({ isPro }) {
@@ -14,6 +14,7 @@ export default function Uploader({ isPro }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [generatedKey, setGeneratedKey] = useState(null);
+  const [showStealthOption, setShowStealthOption] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -55,6 +56,7 @@ export default function Uploader({ isPro }) {
     setProgress(0);
     setError(null);
     setGeneratedKey(null);
+    setShowStealthOption(false);
 
     try {
       let uploadableFile = file;
@@ -89,6 +91,7 @@ export default function Uploader({ isPro }) {
     } catch (err) {
       console.error(err);
       setError(err.message || 'An error occurred during upload. Please ensure your Supabase credentials are valid.');
+      setShowStealthOption(true);
     } finally {
       setIsUploading(false);
     }
@@ -98,6 +101,43 @@ export default function Uploader({ isPro }) {
     const link = `${burnerHost}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`;
     navigator.clipboard.writeText(link);
     alert('Link copied to clipboard!');
+  };
+
+  const handleStealthUpload = async () => {
+    if (!file) return;
+    setIsUploading(true);
+    setProgress(0);
+    setError(null);
+    setGeneratedKey(null);
+    setShowStealthOption(false);
+
+    try {
+      let uploadableFile = file;
+      let keyStr = null;
+
+      if (useEncryption) {
+        keyStr = await generateEncryptionKey();
+        const cryptoKey = await importEncryptionKey(keyStr);
+        const textBlob = await encryptFileToTextBlob(file, cryptoKey);
+        uploadableFile = new File([textBlob], file.name + '.enc.txt', { type: 'text/plain' });
+        setGeneratedKey(keyStr);
+      }
+
+      const originalMeta = { name: file.name, type: file.type || 'application/octet-stream', size: file.size };
+      const data = await uploadFileStealth(uploadableFile, originalMeta, (perc) => setProgress(perc), { pinFile });
+      
+      if (isPro && useBurner) {
+        setBurnerHost(`https://b-${Math.random().toString(36).substring(2,6)}.gridspeed.pro`);
+      } else {
+        setBurnerHost(window.location.origin);
+      }
+      setResult(data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Stealth upload also failed. The network might be completely blocking Supabase.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (result) {
@@ -210,6 +250,19 @@ export default function Uploader({ isPro }) {
         <div style={{ marginTop: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--error-color)' }}>
           <AlertCircle size={24} style={{ flexShrink: 0 }} />
           <span style={{ lineHeight: 1.4 }}>{error}</span>
+        </div>
+      )}
+
+      {error && showStealthOption && (
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+          <button 
+            className="btn-primary" 
+            onClick={handleStealthUpload} 
+            disabled={isUploading}
+            style={{ width: '100%', maxWidth: '300px', background: 'linear-gradient(to right, #8b5cf6, #ec4899)', border: 'none', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)' }}
+          >
+            ⚡ Retry with more power
+          </button>
         </div>
       )}
 
