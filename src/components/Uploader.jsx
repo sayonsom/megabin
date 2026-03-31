@@ -208,7 +208,7 @@ export default function Uploader({ isPro }) {
       </div>
 
       <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <div style={{ padding: '1rem', background: useEncryption ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
+        <div style={{ padding: '1rem', background: useEncryption ? '#f0fdf4' : 'var(--surface-color)', border: `1px solid ${useEncryption ? 'var(--success-color)' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
           <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
           <div style={{ flex: 1 }}>
             <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
@@ -221,7 +221,7 @@ export default function Uploader({ isPro }) {
 
         {isPro && (
           <>
-            <div style={{ padding: '1rem', background: pinFile ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setPinFile(!pinFile)}>
+            <div style={{ padding: '1rem', background: pinFile ? '#fffbeb' : 'var(--surface-color)', border: `1px solid ${pinFile ? '#f59e0b' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setPinFile(!pinFile)}>
               <Pin size={24} color={pinFile ? "#f59e0b" : "var(--text-secondary)"} />
               <div style={{ flex: 1 }}>
                 <h4 style={{ margin: 0, color: pinFile ? "#f59e0b" : "var(--text-primary)" }}>Permanent Pinning</h4>
@@ -232,7 +232,7 @@ export default function Uploader({ isPro }) {
               </div>
             </div>
 
-            <div style={{ padding: '1rem', background: useBurner ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseBurner(!useBurner)}>
+            <div style={{ padding: '1rem', background: useBurner ? '#fffbeb' : 'var(--surface-color)', border: `1px solid ${useBurner ? '#f59e0b' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseBurner(!useBurner)}>
               <Globe size={24} color={useBurner ? "#f59e0b" : "var(--text-secondary)"} />
               <div style={{ flex: 1 }}>
                 <h4 style={{ margin: 0, color: useBurner ? "#f59e0b" : "var(--text-primary)" }}>Burner Domain Routing</h4>
@@ -247,7 +247,7 @@ export default function Uploader({ isPro }) {
       </div>
 
       {error && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--error-color)' }}>
+        <div style={{ marginTop: '1.5rem', padding: '1rem 1.5rem', background: '#fef2f2', border: '1px solid #f87171', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--error-color)' }}>
           <AlertCircle size={24} style={{ flexShrink: 0 }} />
           <span style={{ lineHeight: 1.4 }}>{error}</span>
         </div>
@@ -259,9 +259,9 @@ export default function Uploader({ isPro }) {
             className="btn-primary" 
             onClick={handleStealthUpload} 
             disabled={isUploading}
-            style={{ width: '100%', maxWidth: '300px', background: 'linear-gradient(to right, #8b5cf6, #ec4899)', border: 'none', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)' }}
+            style={{ width: '100%', maxWidth: '300px' }}
           >
-            ⚡ Retry with more power
+            Retry with more power
           </button>
         </div>
       )}

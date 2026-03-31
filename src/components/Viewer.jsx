@@ -140,13 +140,13 @@ export default function Viewer() {
       </div>
 
       {textContent !== null ? (
-        <div style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1.5rem', borderRadius: '12px', overflowX: 'auto', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <pre style={{ margin: 0, color: '#e5e7eb', fontFamily: 'monospace', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+        <div style={{ background: '#f1f5f9', padding: '1.5rem', borderRadius: '12px', overflowX: 'auto', border: '1px solid var(--surface-border)' }}>
+          <pre style={{ margin: 0, color: 'var(--text-primary)', fontFamily: 'monospace', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
             {textContent}
           </pre>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '2px dashed var(--surface-border)' }}>
           <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>
             This asset is either a binary or too large to preview inline. {hashKey && 'It has been successfully localized.'}
           </p>
@@ -161,7 +161,7 @@ export default function Viewer() {
         <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '1.2rem' }}>
           Did this alignment streamline your sprint? Send a synergistic update instantly.
         </p>
-        <Link to="/" className="btn-secondary" style={{ display: 'inline-flex', padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.05)' }}>
+        <Link to="/" className="btn-secondary" style={{ display: 'inline-flex', padding: '0.8rem 1.5rem' }}>
           <ShieldCheck size={20} style={{ color: 'var(--success-color)' }} />
           <span>Send a Synergistic Response</span>
         </Link>

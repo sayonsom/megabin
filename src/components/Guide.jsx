@@ -11,8 +11,8 @@ export default function Guide() {
       </p>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: '#fff', marginBottom: '1rem' }}>
-          <Shield size={24} color="#10b981" /> End-to-End Alignment (Frictionless Sync)
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+          <Shield size={24} color="var(--success-color)" /> End-to-End Alignment (Frictionless Sync)
         </h2>
         <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
           By toggling <strong>"End-to-End Alignment"</strong>, MegaBin performs rigorous local optimization natively inside your web browser before the asset ever enters the synergy stream.
@@ -24,22 +24,22 @@ export default function Guide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: '#fff', marginBottom: '1rem' }}>
-          <Terminal size={24} color="#60a5fa" /> Automated CLI Synergies
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+          <Terminal size={24} color="var(--accent-color)" /> Automated CLI Synergies
         </h2>
         <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
           To execute alignments programmatically, MegaBin provides a synergistic Node.js utility (<code>cli/megabin.js</code>) in our strategy repository. 
         </p>
-        <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <code style={{ color: '#a5b4fc' }}>node cli/megabin.js /path/to/synergy/q4_deliverables.csv</code>
+        <div style={{ background: '#f1f5f9', padding: '1rem', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+          <code style={{ color: 'var(--accent-color)' }}>node cli/megabin.js /path/to/synergy/q4_deliverables.csv</code>
         </div>
         <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: '1rem' }}>
           It strategically orchestrates massive assets into agile, micro-streaming paradigms to ensure peak operational synergy across the corporate network.
         </p>
       </section>
 
-      <section style={{ marginBottom: '3rem', padding: '1.5rem', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '12px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: '#fff', marginBottom: '1rem' }}>
+      <section style={{ marginBottom: '3rem', padding: '1.5rem', background: '#fffbeb', borderRadius: '12px', border: '1px solid #fcd34d' }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
           <Zap size={24} color="#f59e0b" /> MegaBin Pro
         </h2>
         <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>

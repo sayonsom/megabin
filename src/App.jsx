@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Box } from 'lucide-react';
 import * as Sentry from '@sentry/react';
 import Uploader from './components/Uploader';
 import Viewer from './components/Viewer';
@@ -17,7 +18,7 @@ function MainApp() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     if (query.get('upgraded') === 'true') {
-      alert("🎉 MegaBin Pro Activated! Thank you for subscribing.");
+      alert("MegaBin Pro Activated! Thank you for subscribing.");
       navigate('/', { replace: true });
     }
   }, [location, navigate]);
@@ -28,7 +29,7 @@ function MainApp() {
       return;
     }
     if (isPro) {
-      alert("✅ MegaBin Pro is already active!");
+      alert("MegaBin Pro is already active!");
       return;
     }
     try {
@@ -54,10 +55,10 @@ function MainApp() {
       
       <header style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-            <span style={{ fontSize: '1.4rem' }}>⚡</span>
+          <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--accent-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--accent-color)' }}>
+            <Box size={24} color="var(--accent-color)" />
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800, background: 'linear-gradient(135deg, #fff 0%, #a5b4fc 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>MegaBin</h1>
+          <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>MegaBin</h1>
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -75,9 +76,9 @@ function MainApp() {
           <button 
             onClick={handleProUpgrade} 
             className="btn-primary"
-            style={{ padding: '0.6rem 1.2rem', background: isPro ? 'linear-gradient(to right, #fbbf24, #f59e0b)' : 'linear-gradient(to right, #10b981, #06b6d4)', color: isPro ? '#000' : '#fff', border: 'none', borderRadius: '24px', boxShadow: isPro ? '0 4px 15px rgba(245, 158, 11, 0.4)' : '0 4px 15px rgba(16, 185, 129, 0.3)' }}
+            style={{ padding: '0.6rem 1.2rem', background: isPro ? '#f59e0b' : 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px', boxShadow: 'none' }}
           >
-            {isPro ? '👑 SYNERGY MAXED' : '🚀 Accelerate Paradigm'}
+            {isPro ? 'Synergy Maxed' : 'Accelerate Paradigm'}
           </button>
         </div>
       </header>

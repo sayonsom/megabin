@@ -21,7 +21,13 @@ export default function AuthModal({ isOpen, onClose }) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+             emailRedirectTo: window.location.origin
+          }
+        });
         if (error) throw error;
         alert("Registration successful! You may now log in.");
         setIsLogin(true);
@@ -42,7 +48,7 @@ export default function AuthModal({ isOpen, onClose }) {
         </button>
         
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', background: 'linear-gradient(135deg, #fff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h2>
           <p style={{ color: 'var(--text-secondary)' }}>
@@ -51,7 +57,7 @@ export default function AuthModal({ isOpen, onClose }) {
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error-color)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center' }}>
+          <div style={{ background: '#fef2f2', color: 'var(--error-color)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center', border: '1px solid #f87171' }}>
             {error}
           </div>
         )}
@@ -89,7 +95,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button onClick={() => { setIsLogin(!isLogin); setError(''); }} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', fontWeight: 500 }}>
+          <button onClick={() => { setIsLogin(!isLogin); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-color)', cursor: 'pointer', fontWeight: 500 }}>
             {isLogin ? 'Sign up' : 'Log in'}
           </button>
         </div>
