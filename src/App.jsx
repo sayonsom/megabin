@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import * as Sentry from '@sentry/react';
 import Uploader from './components/Uploader';
 import Viewer from './components/Viewer';
 import Guide from './components/Guide';
@@ -76,7 +77,7 @@ function MainApp() {
             className="btn-primary"
             style={{ padding: '0.6rem 1.2rem', background: isPro ? 'linear-gradient(to right, #fbbf24, #f59e0b)' : 'linear-gradient(to right, #10b981, #06b6d4)', color: isPro ? '#000' : '#fff', border: 'none', borderRadius: '24px', boxShadow: isPro ? '0 4px 15px rgba(245, 158, 11, 0.4)' : '0 4px 15px rgba(16, 185, 129, 0.3)' }}
           >
-            {isPro ? '👑 PRO ACTIVE' : '🚀 Upgrade to Pro'}
+            {isPro ? '👑 SYNERGY MAXED' : '🚀 Accelerate Paradigm'}
           </button>
         </div>
       </header>
@@ -96,10 +97,12 @@ function MainApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <MainApp />
-      </Router>
-    </AuthProvider>
+    <Sentry.ErrorBoundary fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}><h2>Something went wrong.</h2><p>Please refresh the page or try again later.</p></div>}>
+      <AuthProvider>
+        <Router>
+          <MainApp />
+        </Router>
+      </AuthProvider>
+    </Sentry.ErrorBoundary>
   );
 }

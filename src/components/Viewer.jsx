@@ -102,7 +102,7 @@ export default function Viewer() {
     return (
       <div className="glass-panel" style={{ padding: '6rem 2rem', textAlign: 'center' }}>
         <Loader2 size={64} className="animate-spin title-gradient" style={{ margin: '0 auto' }} />
-        <p style={{ marginTop: '1.5rem', fontSize: '1.2rem' }}>Looking for file...</p>
+        <p style={{ marginTop: '1.5rem', fontSize: '1.2rem' }}>Locating asset...</p>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function Viewer() {
       <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
         <AlertTriangle size={64} style={{ margin: '0 auto 1.5rem', color: 'var(--error-color)' }} />
         <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Oops!</h2>
-        <p style={{ marginBottom: '2.5rem', fontSize: '1.1rem' }}>{error === 'File not found' ? 'This file does not exist or has expired.' : 'An error occurred fetching the file or the database is not configured.'}</p>
+        <p style={{ marginBottom: '2.5rem', fontSize: '1.1rem' }}>{error === 'File not found' ? 'This asset has completed its lifecycle or does not exist.' : 'An error occurred fetching the asset or the database is not configured.'}</p>
         <Link to="/" className="btn-primary">Back to Home</Link>
       </div>
     );
@@ -135,7 +135,7 @@ export default function Viewer() {
         </div>
         <button className="btn-primary" onClick={handleDownload} style={{ padding: '0.8rem 1.5rem' }}>
           <Download size={22} />
-          <span>Download</span>
+          <span>Retrieve Asset</span>
         </button>
       </div>
 
@@ -148,10 +148,10 @@ export default function Viewer() {
       ) : (
         <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
           <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>
-            This file is either a binary or too large to preview inline. {hashKey && 'It has been successfully decrypted locally.'}
+            This asset is either a binary or too large to preview inline. {hashKey && 'It has been successfully localized.'}
           </p>
           <button className="btn-secondary" onClick={handleDownload}>
-            Download File to View
+            Retrieve Asset to Review
           </button>
         </div>
       )}
@@ -159,11 +159,11 @@ export default function Viewer() {
       {/* VIRAL HOOK: The Encrypted Reply CTA */}
       <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--surface-border)', textAlign: 'center' }}>
         <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '1.2rem' }}>
-          Did this secure transfer save your life? Send an impenetrable reply instantly.
+          Did this alignment streamline your sprint? Send a synergistic update instantly.
         </p>
         <Link to="/" className="btn-secondary" style={{ display: 'inline-flex', padding: '0.8rem 1.5rem', background: 'rgba(255,255,255,0.05)' }}>
           <ShieldCheck size={20} style={{ color: 'var(--success-color)' }} />
-          <span>Send an Encrypted Reply Payload</span>
+          <span>Send a Synergistic Response</span>
         </Link>
       </div>
     </div>

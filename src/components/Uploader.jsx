@@ -104,9 +104,9 @@ export default function Uploader({ isPro }) {
     return (
       <div className="glass-panel" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
         <CheckCircle size={64} className="title-gradient file-icon-bounce" style={{ margin: '0 auto 1.5rem', color: 'var(--success-color)' }} />
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Upload Complete!</h2>
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Optimization Complete!</h2>
         <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>
-           Your file is ready to share. {generatedKey && <strong style={{color:'var(--success-color)'}}><br/>Secured with End-to-End Encryption.</strong>}
+           Deliverable optimized. Ready for cross-functional alignment. {generatedKey && <strong style={{color:'var(--success-color)'}}><br/>Secured with E2E Synergy.</strong>}
         </p>
         
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem' }}>
@@ -124,12 +124,12 @@ export default function Uploader({ isPro }) {
         
         {generatedKey && (
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-            Warning: Do not lose this link. It contains the decryption key. The server cannot recover your file if the key is lost.
+            Note: Keep this alignment link secure. The quantum state of this asset requires it for observation.
           </p>
         )}
 
         <button className="btn-secondary" onClick={() => { setResult(null); setFile(null); setProgress(0); setGeneratedKey(null); }}>
-          Upload Another File
+          Optimize Another Resource
         </button>
       </div>
     );
@@ -161,7 +161,7 @@ export default function Uploader({ isPro }) {
           </div>
         ) : (
           <div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Drag & drop a file here</h3>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Drop deliverables here for paradigm shifting</h3>
             <p style={{ fontSize: '1.1rem' }}>or click to browse (Max {isPro ? '5GB' : '100MB'})</p>
           </div>
         )}
@@ -172,7 +172,7 @@ export default function Uploader({ isPro }) {
           <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
           <div style={{ flex: 1 }}>
             <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
-            <p style={{ margin: 0, fontSize: '0.85rem' }}>Encrypts file in the browser and uploads as text to evade Deep Packet Inspection.</p>
+            <p style={{ margin: 0, fontSize: '0.85rem' }}>Streamlines assets locally before syncing to ensure frictionless corporate alignment.</p>
           </div>
           <div>
             <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)' }} />
@@ -226,7 +226,7 @@ export default function Uploader({ isPro }) {
           disabled={!file || isUploading}
           style={{ width: '100%', maxWidth: '300px', padding: '1rem', fontSize: '1.1rem' }}
         >
-          {isUploading ? `Uploading... ${progress}%` : 'Upload File'}
+          {isUploading ? `Optimizing... ${progress}%` : 'Optimize Resource'}
         </button>
       </div>
     </div>
