@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { UploadCloud, CheckCircle, Copy, AlertCircle, Shield, Pin, Globe } from 'lucide-react';
 import { uploadFile, uploadFileStealth } from '../utils/upload';
 import { generateEncryptionKey, importEncryptionKey, encryptFileToTextBlob } from '../utils/crypto';
+import { supabase } from '../lib/supabase';
 
 export default function Uploader({ isPro }) {
   const [file, setFile] = useState(null);
@@ -15,6 +16,7 @@ export default function Uploader({ isPro }) {
   const [error, setError] = useState(null);
   const [generatedKey, setGeneratedKey] = useState(null);
   const [showStealthOption, setShowStealthOption] = useState(false);
+  const [retryAlgorithm, setRetryAlgorithm] = useState('balanced');
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -77,9 +79,14 @@ export default function Uploader({ isPro }) {
         size: file.size
       };
 
-      const data = await uploadFile(uploadableFile, originalMeta, (perc) => {
-        setProgress(perc);
-      }, { pinFile });
+      const options = { pinFile, retryAlgorithm };
+      let data;
+      
+      if (retryAlgorithm === 'stealth') {
+        data = await uploadFileStealth(uploadableFile, originalMeta, (perc) => setProgress(perc), options);
+      } else {
+        data = await uploadFile(uploadableFile, originalMeta, (perc) => setProgress(perc), options);
+      }
       
       if (isPro && useBurner) {
         setBurnerHost(`https://b-${Math.random().toString(36).substring(2,6)}.gridspeed.pro`);
@@ -88,6 +95,13 @@ export default function Uploader({ isPro }) {
       }
       
       setResult(data);
+      
+      // Deduct transfer credit if a pro feature was used
+      const isProUpload = file.size > 100 * 1024 * 1024 || pinFile || useBurner;
+      if (isProUpload) {
+        await supabase.rpc('decrement_transfer');
+      }
+      
     } catch (err) {
       console.error(err);
       setError(err.message || 'An error occurred during upload. Please ensure your Supabase credentials are valid.');
@@ -271,8 +285,25 @@ export default function Uploader({ isPro }) {
           <div className="progress-bar" style={{ width: `${progress}%` }}></div>
         </div>
       )}
+      
+      {!isUploading && file && (
+        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
+          <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Transfer Algorithm (Retry Strategy)</label>
+          <select 
+            className="input-base" 
+            style={{ width: '100%', maxWidth: '300px', cursor: 'pointer' }}
+            value={retryAlgorithm}
+            onChange={(e) => setRetryAlgorithm(e.target.value)}
+          >
+            <option value="balanced">Balanced (Default)</option>
+            <option value="aggressive">Aggressive (Fast Retries)</option>
+            <option value="corporate_firewall">Corporate Firewall Bypass (Small Chunks)</option>
+            <option value="stealth">Max Stealth (Encrypted Chunks)</option>
+          </select>
+        </div>
+      )}
 
-      <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
         <button 
           className="btn-primary" 
           onClick={handleUpload} 

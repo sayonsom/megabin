@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPro, setIsPro] = useState(false);
+  const [transfersRemaining, setTransfersRemaining] = useState(0);
 
   useEffect(() => {
     // Check active session
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           setProfile(null);
           setIsPro(false);
+          setTransfersRemaining(0);
           setLoading(false);
         }
       }
@@ -44,7 +46,9 @@ export const AuthProvider = ({ children }) => {
       
       if (!error && data) {
         setProfile(data);
-        setIsPro(data.is_pro || false);
+        const remaining = data.transfers_remaining || 0;
+        setTransfersRemaining(remaining);
+        setIsPro(remaining > 0);
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -57,6 +61,8 @@ export const AuthProvider = ({ children }) => {
     user,
     profile,
     isPro,
+    transfersRemaining,
+    setTransfersRemaining,
     loading,
     signOut: () => supabase.auth.signOut()
   };

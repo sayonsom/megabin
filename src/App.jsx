@@ -6,19 +6,22 @@ import Uploader from './components/Uploader';
 import Viewer from './components/Viewer';
 import Guide from './components/Guide';
 import AuthModal from './components/AuthModal';
+import PacksModal from './components/PacksModal';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './index.css';
 
 function MainApp() {
-  const { user, isPro, signOut } = useAuth();
+  const { user, isPro, transfersRemaining, signOut } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [packsModalOpen, setPacksModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     if (query.get('upgraded') === 'true') {
-      alert("MegaBin Pro Activated! Thank you for subscribing.");
+      const added = query.get('packSize') || '5';
+      alert(`MegaBin Pro Activated! Added ${added} transfers to your account.`);
       navigate('/', { replace: true });
     }
   }, [location, navigate]);
@@ -28,26 +31,7 @@ function MainApp() {
       setAuthModalOpen(true);
       return;
     }
-    if (isPro) {
-      alert("MegaBin Pro is already active!");
-      return;
-    }
-    try {
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, email: user.email })
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Failed to initialize billing secure proxy.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Billing microservice is temporarily offline.");
-    }
+    setPacksModalOpen(true);
   };
 
   return (
@@ -73,12 +57,18 @@ function MainApp() {
             <button onClick={() => setAuthModalOpen(true)} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.9rem' }}>Log In</button>
           )}
 
+          {user && (
+            <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '0.9rem', color: isPro ? '#f59e0b' : 'var(--text-secondary)' }}>
+              Transfers: <strong>{transfersRemaining}</strong>
+            </div>
+          )}
+
           <button 
             onClick={handleProUpgrade} 
             className="btn-primary"
-            style={{ padding: '0.6rem 1.2rem', background: isPro ? '#f59e0b' : 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px', boxShadow: 'none' }}
+            style={{ padding: '0.6rem 1.2rem', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', boxShadow: 'none' }}
           >
-            {isPro ? 'Synergy Maxed' : 'Accelerate Paradigm'}
+            Expand Synergy
           </button>
         </div>
       </header>
@@ -92,6 +82,7 @@ function MainApp() {
       </main>
 
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <PacksModal isOpen={packsModalOpen} onClose={() => setPacksModalOpen(false)} user={user} />
     </div>
   );
 }

@@ -14,9 +14,19 @@ export async function uploadFile(file, originalMeta, onProgress, options = {}) {
       const ufileType = originalMeta?.type || file.type || 'application/octet-stream';
       const ufileSize = originalMeta?.size || file.size;
       
+      let delays = [0, 3000, 5000, 10000, 20000];
+      let tChunkSize = 256 * 1024;
+      
+      if (options.retryAlgorithm === 'aggressive') {
+        delays = [0, 1000, 1500, 2000, 3000, 3000, 3000, 5000, 5000, 10000];
+      } else if (options.retryAlgorithm === 'corporate_firewall') {
+        delays = [0, 5000, 15000, 30000, 60000, 120000];
+        tChunkSize = 64 * 1024; // Smaller chunks
+      }
+
       const upload = new tus.Upload(file, {
         endpoint: `${supabaseUrl}/storage/v1/upload/resumable`,
-        retryDelays: [0, 3000, 5000, 10000, 20000],
+        retryDelays: delays,
         headers: {
           authorization: `Bearer ${session?.access_token || anonKey}`,
           'x-upsert': 'true', 
@@ -29,7 +39,7 @@ export async function uploadFile(file, originalMeta, onProgress, options = {}) {
           contentType: file.type || 'application/octet-stream',
           cacheControl: '3600',
         },
-        chunkSize: 256 * 1024, // 256KB chunks to evade strict network DLP / Firewall limits
+        chunkSize: tChunkSize,
         onError: function (error) {
           reject(error);
         },

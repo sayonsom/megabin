@@ -2,7 +2,8 @@ create table public.profiles (
   id uuid references auth.users not null primary key,
   email text,
   is_pro boolean default false,
-  stripe_customer_id text
+  stripe_customer_id text,
+  transfers_remaining integer default 0
 );
 
 alter table public.profiles enable row level security;
@@ -32,3 +33,13 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- RPC to accurately decrement transfers natively
+create or replace function public.decrement_transfer()
+returns void as $$
+begin
+  update public.profiles
+  set transfers_remaining = transfers_remaining - 1
+  where id = auth.uid() and transfers_remaining > 0;
+end;
+$$ language plpgsql security definer;

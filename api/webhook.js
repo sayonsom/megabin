@@ -39,13 +39,26 @@ export default async function handler(req, res) {
     const stripeCustomerId = session.customer;
 
     if (userId) {
-      // Elevate the user's Supabase Profile to is_pro universally across their devices
+      // Elevate the user's Supabase Profile to is_pro, and increment transfers
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('transfers_remaining')
+        .eq('id', userId)
+        .single();
+        
+      const currentTransfers = profile?.transfers_remaining || 0;
+      const transfersToAdd = parseInt(session.metadata?.transferCount || '0', 10);
+
       const { error } = await supabase
         .from('profiles')
-        .update({ is_pro: true, stripe_customer_id: stripeCustomerId })
+        .update({ 
+          is_pro: true, 
+          stripe_customer_id: stripeCustomerId,
+          transfers_remaining: currentTransfers + transfersToAdd
+        })
         .eq('id', userId);
         
-      if (error) console.error("Error updating profile to pro:", error);
+      if (error) console.error("Error updating profile with new transfers:", error);
     }
   }
 
