@@ -11,12 +11,12 @@ export default async function handler(req, res) {
     let packName, unitAmount, transferCount;
     if (packType === 'pack_100') {
       packName = 'MegaBin Pro - 100 Transfers';
-      unitAmount = 5000;
+      unitAmount = 2500;
       transferCount = 100;
-    } else if (packType === 'pack_20') {
-      packName = 'MegaBin Pro - 20 Transfers';
+    } else if (packType === 'pack_25') {
+      packName = 'MegaBin Pro - 25 Transfers';
       unitAmount = 1500;
-      transferCount = 20;
+      transferCount = 25;
     } else {
       packName = 'MegaBin Pro - 5 Transfers';
       unitAmount = 500;
