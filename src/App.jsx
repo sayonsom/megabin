@@ -5,8 +5,10 @@ import * as Sentry from '@sentry/react';
 import Uploader from './components/Uploader';
 import Viewer from './components/Viewer';
 import Guide from './components/Guide';
+import Enterprise from './components/Enterprise';
 import AuthModal from './components/AuthModal';
 import PacksModal from './components/PacksModal';
+import TransferHistory from './components/TransferHistory';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './index.css';
 
@@ -46,7 +48,11 @@ function MainApp() {
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Link to="/enterprise" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">For Enterprises</Link>
           <Link to="/guide" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">Guide</Link>
+          {user && (
+            <Link to="/history" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">History</Link>
+          )}
           
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -76,7 +82,9 @@ function MainApp() {
       <main className="fade-in-up" style={{ animationDelay: '0.1s' }}>
         <Routes>
           <Route path="/" element={<Uploader isPro={isPro} />} />
+          <Route path="/enterprise" element={<Enterprise />} />
           <Route path="/guide" element={<Guide />} />
+          <Route path="/history" element={<TransferHistory />} />
           <Route path="/:shortId" element={<Viewer />} />
         </Routes>
       </main>

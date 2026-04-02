@@ -75,6 +75,20 @@ export default function Viewer() {
   const handleDownload = async () => {
     if (!fileMeta) return;
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData?.session?.user) {
+         try {
+           await supabase.from('transfer_history').insert([{
+             user_id: sessionData.session.user.id,
+             file_name: fileMeta.original_name,
+             transfer_type: 'download',
+             size_bytes: fileMeta.size_bytes
+           }]);
+         } catch(err) {
+           console.error('Failed to log download:', err);
+         }
+      }
+
       if (decryptedBlobUrl) {
          const a = document.createElement('a');
          a.href = decryptedBlobUrl;

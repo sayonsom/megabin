@@ -210,3 +210,69 @@ p {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+
+/* Box Style Table */
+.box-table-container {
+  background: var(--surface-color);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+}
+
+.box-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.box-th {
+  background-color: var(--bg-color);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid var(--surface-border);
+}
+
+.box-tr {
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.box-tr:hover {
+  background-color: #f8fafc;
+}
+
+.box-tr:last-child {
+  border-bottom: none;
+}
+
+.box-td {
+  padding: 1rem 1.5rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+.box-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.box-badge-upload {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+}
+
+.box-badge-download {
+  background-color: #dcfce7;
+  color: #166534;
+}

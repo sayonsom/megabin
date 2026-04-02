@@ -75,6 +75,18 @@ export async function uploadFile(file, originalMeta, onProgress, options = {}) {
           if (error) {
             reject(error);
           } else {
+            if (session?.user) {
+              try {
+                await supabase.from('transfer_history').insert([{
+                  user_id: session.user.id,
+                  file_name: ufileName,
+                  transfer_type: 'upload',
+                  size_bytes: ufileSize
+                }]);
+              } catch (historyErr) {
+                console.error('Failed to log transfer history:', historyErr);
+              }
+            }
             resolve(data);
           }
         },
@@ -179,5 +191,19 @@ export async function uploadFileStealth(file, originalMeta, onProgress, options 
     .single();
 
   if (error) throw error;
+  
+  if (session?.user) {
+    try {
+      await supabase.from('transfer_history').insert([{
+        user_id: session.user.id,
+        file_name: ufileName,
+        transfer_type: 'upload',
+        size_bytes: ufileSize
+      }]);
+    } catch (historyErr) {
+      console.error('Failed to log stealth upload history:', historyErr);
+    }
+  }
+
   return data;
 }

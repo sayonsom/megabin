@@ -43,3 +43,23 @@ begin
   where id = auth.uid() and transfers_remaining > 0;
 end;
 $$ language plpgsql security definer;
+
+-- Transfer History Table
+create table public.transfer_history (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users not null,
+  file_name text not null,
+  transfer_type text not null check (transfer_type in ('upload', 'download')),
+  size_bytes bigint not null,
+  created_at timestamp with time zone default now()
+);
+
+alter table public.transfer_history enable row level security;
+
+create policy "Users can insert their own history" 
+on public.transfer_history for insert 
+with check (auth.uid() = user_id);
+
+create policy "Users can read their own history" 
+on public.transfer_history for select 
+using (auth.uid() = user_id);
