@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
 :root {
-  --bg-color: #f9f9fb;
+  --bg-color: #F4F4F4;
   --bg-gradient: none;
   --surface-color: #ffffff;
   --surface-border: #e2e8f0;
@@ -50,7 +50,7 @@ p {
   background: var(--surface-color);
   border: 1px solid var(--surface-border);
   border-radius: 12px;
-  box-shadow: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* Box shadow */
 }
 
 /* Utility Animations */
@@ -99,9 +99,10 @@ p {
   background: var(--accent-color);
   color: white;
   border: none;
-  padding: 0.75rem 1.7rem;
+  padding: 12px 24px;
   border-radius: 100px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--font-family);
@@ -146,20 +147,26 @@ p {
 /* Inputs */
 .input-base {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid var(--surface-border);
-  border-radius: 100px;
-  padding: 0.75rem 1.5rem;
-  color: var(--text-primary);
+  background: #FFFFFF;
+  border: 1px solid #D0D0D0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #1A1A1A;
   font-family: inherit;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  font-size: 14px;
+  height: 42px;
+  transition: border-color 0.2s ease;
+}
+
+.input-base::placeholder {
+  color: #9E9E9E;
 }
 
 .input-base:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--accent-glow);
+  border: 2px solid #0061D5;
+  box-shadow: none;
+  padding: 9px 13px; /* Compensate for the 2px border to avoid layout shift */
 }
 
 /* Uploader specific styles */
