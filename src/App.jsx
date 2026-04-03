@@ -37,49 +37,45 @@ function MainApp() {
   };
 
   return (
-    <div className="container" style={{ position: 'relative', paddingTop: '6rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      <header style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--accent-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--accent-color)' }}>
-            <Box size={24} color="var(--accent-color)" />
-          </div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>MegaBin</h1>
-        </Link>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link to="/enterprise" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">For Enterprises</Link>
-          <Link to="/guide" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">Guide</Link>
-          {user && (
-            <Link to="/history" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', marginRight: '0.5rem', transition: 'color 0.2s' }} className="hover:text-white">History</Link>
-          )}
+      <header style={{ background: '#FFFFFF', borderBottom: '1px solid #D0D0D0', display: 'flex', justifyContent: 'center', zIndex: 10, position: 'sticky', top: 0 }}>
+        <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', boxSizing: 'border-box' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
+            <Box size={24} color="#0061D5" />
+            <h1 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#1A1A1A' }}>MegaBin</h1>
+          </Link>
           
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-               <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{user.email}</span>
-               <button onClick={signOut} className="btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Log Out</button>
-            </div>
-          ) : (
-            <button onClick={() => setAuthModalOpen(true)} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.9rem' }}>Log In</button>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/enterprise" style={{ color: '#6B6B6B', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600 }}>For Enterprises</Link>
+            <Link to="/guide" style={{ color: '#6B6B6B', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600 }}>Guide</Link>
+            {user && (
+              <Link to="/history" style={{ color: '#6B6B6B', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600 }}>History</Link>
+            )}
+            
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                 <span style={{ fontSize: '0.85rem', color: '#6B6B6B' }}>{user.email}</span>
+                 <button onClick={signOut} className="btn-ghost" style={{ padding: 0 }}>Log Out</button>
+              </div>
+            ) : (
+              <button onClick={() => setAuthModalOpen(true)} className="btn-ghost" style={{ padding: 0, fontWeight: 600 }}>Log In</button>
+            )}
 
-          {user && (
-            <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '0.9rem', color: isPro ? '#f59e0b' : 'var(--text-secondary)' }}>
-              Transfers: <strong>{transfersRemaining}</strong>
-            </div>
-          )}
+            {user && (
+              <div style={{ padding: '0.3rem 0.6rem', border: '1px solid #D0D0D0', borderRadius: '4px', fontSize: '0.85rem', color: isPro ? '#0061D5' : '#6B6B6B' }}>
+                Transfers: <strong style={{color: '#1A1A1A'}}>{transfersRemaining}</strong>
+              </div>
+            )}
 
-          <button 
-            onClick={handleProUpgrade} 
-            className="btn-primary"
-            style={{ padding: '0.6rem 1.2rem', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', boxShadow: 'none' }}
-          >
-            Expand Synergy
-          </button>
+            <button onClick={handleProUpgrade} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '13px', borderRadius: '100px' }}>
+              Expand Synergy
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="fade-in-up" style={{ animationDelay: '0.1s' }}>
+      <main style={{ flex: 1, padding: '2rem 1rem', width: '100%', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }} className="fade-in-up">
         <Routes>
           <Route path="/" element={<Uploader isPro={isPro} />} />
           <Route path="/enterprise" element={<Enterprise />} />

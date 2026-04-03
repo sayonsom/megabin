@@ -41,30 +41,30 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
-      <div className="glass-panel" style={{ position: 'relative', width: '100%', maxWidth: '400px', padding: '2.5rem', margin: '1rem', animation: 'fadeInUp 0.3s ease-out' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)', padding: '1rem' }}>
+      <div style={{ position: 'relative', width: '100%', maxWidth: '400px', padding: '40px', margin: 'auto', animation: 'fadeInUp 0.3s ease-out', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: '#6B6B6B', cursor: 'pointer' }}>
           <X size={24} />
         </button>
         
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '24px', marginBottom: '8px', color: '#1A1A1A', fontWeight: 800 }}>
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h2>
-          <p style={{ color: 'var(--text-secondary)' }}>
+          <p style={{ color: '#6B6B6B', fontSize: '15px' }}>
             {isLogin ? 'Log in to securely transfer payloads.' : 'Join MegaBin to evade endpoint monitoring.'}
           </p>
         </div>
 
         {error && (
-          <div style={{ background: '#fef2f2', color: 'var(--error-color)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center', border: '1px solid #f87171' }}>
+          <div style={{ background: '#fef2f2', color: '#b91c1c', padding: '12px', borderRadius: '8px', marginBottom: '24px', fontSize: '14px', textAlign: 'center', border: '1px solid #f87171' }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ position: 'relative' }}>
-            <Mail size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+            <Mail size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#6B6B6B' }} />
             <input 
               type="email" 
               placeholder="Email address" 
@@ -72,11 +72,11 @@ export default function AuthModal({ isOpen, onClose }) {
               onChange={(e) => setEmail(e.target.value)}
               required 
               className="input-base" 
-              style={{ paddingLeft: '2.8rem', width: '100%' }}
+              style={{ paddingLeft: '44px', width: '100%', boxSizing: 'border-box' }}
             />
           </div>
           <div style={{ position: 'relative' }}>
-            <Lock size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+            <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#6B6B6B' }} />
             <input 
               type="password" 
               placeholder="Password" 
@@ -84,18 +84,18 @@ export default function AuthModal({ isOpen, onClose }) {
               onChange={(e) => setPassword(e.target.value)}
               required 
               className="input-base" 
-              style={{ paddingLeft: '2.8rem', width: '100%' }}
+              style={{ paddingLeft: '44px', width: '100%', boxSizing: 'border-box' }}
             />
           </div>
           
-          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '1rem', width: '100%', padding: '0.9rem' }}>
-            {loading ? <Loader2 className="animate-spin title-gradient" size={20} style={{ margin: '0 auto' }} /> : (isLogin ? 'Log In' : 'Sign Up')}
+          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '16px', width: '100%', padding: '12px' }}>
+            {loading ? <Loader2 className="animate-spin" color="#FFFFFF" size={20} style={{ margin: '0 auto' }} /> : (isLogin ? 'Log In' : 'Sign Up')}
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#6B6B6B' }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button onClick={() => { setIsLogin(!isLogin); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-color)', cursor: 'pointer', fontWeight: 500 }}>
+          <button onClick={() => { setIsLogin(!isLogin); setError(''); }} style={{ background: 'none', border: 'none', color: '#0061D5', cursor: 'pointer', fontWeight: 600, padding: 0 }}>
             {isLogin ? 'Sign up' : 'Log in'}
           </button>
         </div>

@@ -37,77 +37,77 @@ export default function TransferHistory() {
 
   if (!user) {
     return (
-      <div className="glass-panel fade-in-up" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Authentication Required</h2>
-        <p>You must log in to view your transfer telemetry.</p>
+      <div className="fade-in-up" style={{ padding: '64px 32px', textAlign: 'center', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', border: '1px solid #D0D0D0' }}>
+        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#1A1A1A', fontWeight: 700 }}>Authentication Required</h2>
+        <p style={{ color: '#6B6B6B', fontSize: '15px' }}>You must log in to view your transfer telemetry.</p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="glass-panel fade-in-up" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-        <Loader2 size={48} className="animate-spin title-gradient" style={{ margin: '0 auto' }} />
-        <p style={{ marginTop: '1rem' }}>Loading synergy logs...</p>
+      <div className="fade-in-up" style={{ padding: '64px 32px', textAlign: 'center', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', border: '1px solid #D0D0D0' }}>
+        <Loader2 size={48} className="animate-spin" color="#0061D5" style={{ margin: '0 auto' }} />
+        <p style={{ marginTop: '16px', color: '#6B6B6B', fontSize: '15px' }}>Loading synergy logs...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="glass-panel fade-in-up" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--error-color)' }}>{error}</p>
+      <div className="fade-in-up" style={{ padding: '48px 32px', textAlign: 'center', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', border: '1px solid #D0D0D0' }}>
+        <p style={{ color: '#b91c1c' }}>{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ padding: '0.8rem', background: 'var(--accent-glow)', borderRadius: '12px' }}>
-          <ListOrdered size={28} className="title-gradient" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ padding: '16px', background: 'rgba(0, 97, 213, 0.1)', borderRadius: '12px' }}>
+          <ListOrdered size={28} color="#0061D5" />
         </div>
         <div>
-          <h2 style={{ fontSize: '1.8rem', margin: 0 }}>Transfer History</h2>
-          <p style={{ margin: 0, fontSize: '1rem' }}>Your log of resource optimizations and retrievals.</p>
+          <h2 style={{ fontSize: '24px', margin: 0, color: '#1A1A1A', fontWeight: 700 }}>Transfer History</h2>
+          <p style={{ margin: 0, fontSize: '15px', color: '#6B6B6B' }}>Your log of resource optimizations and retrievals.</p>
         </div>
       </div>
 
       {history.length === 0 ? (
-        <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center', background: '#f8fafc', border: '2px dashed var(--surface-border)' }}>
-          <Database size={48} color="var(--surface-border)" style={{ margin: '0 auto 1rem' }} />
-          <h3 style={{ fontSize: '1.4rem' }}>No telemetry data yet</h3>
-          <p>Your transfer history will appear here once you optimize or retrieve assets.</p>
+        <div style={{ padding: '64px 32px', textAlign: 'center', background: '#FFFFFF', border: '1px dashed #D0D0D0', borderRadius: '12px' }}>
+          <Database size={48} color="#D0D0D0" style={{ margin: '0 auto 16px' }} />
+          <h3 style={{ fontSize: '18px', color: '#1A1A1A', fontWeight: 700, margin: '0 0 8px' }}>No telemetry data yet</h3>
+          <p style={{ color: '#6B6B6B', fontSize: '15px' }}>Your transfer history will appear here once you optimize or retrieve assets.</p>
         </div>
       ) : (
-        <div className="box-table-container">
-          <table className="box-table">
-            <thead>
+        <div style={{ background: '#FFFFFF', border: '1px solid #D0D0D0', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+            <thead style={{ background: '#F4F4F4', borderBottom: '1px solid #D0D0D0' }}>
               <tr>
-                <th className="box-th">Asset Name</th>
-                <th className="box-th">Action</th>
-                <th className="box-th">Size</th>
-                <th className="box-th">Timestamp</th>
+                <th style={{ padding: '16px 24px', fontWeight: 700, color: '#1A1A1A' }}>Asset Name</th>
+                <th style={{ padding: '16px 24px', fontWeight: 700, color: '#1A1A1A' }}>Action</th>
+                <th style={{ padding: '16px 24px', fontWeight: 700, color: '#1A1A1A' }}>Size</th>
+                <th style={{ padding: '16px 24px', fontWeight: 700, color: '#1A1A1A' }}>Timestamp</th>
               </tr>
             </thead>
             <tbody>
               {history.map((item) => (
-                <tr key={item.id} className="box-tr">
-                  <td className="box-td" style={{ fontWeight: 600 }}>{item.file_name}</td>
-                  <td className="box-td">
+                <tr key={item.id} style={{ borderBottom: '1px solid #D0D0D0' }}>
+                  <td style={{ padding: '16px 24px', fontWeight: 600, color: '#1A1A1A' }}>{item.file_name}</td>
+                  <td style={{ padding: '16px 24px' }}>
                     {item.transfer_type === 'upload' ? (
-                      <span className="box-badge box-badge-upload">
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(0, 97, 213, 0.1)', color: '#0061D5', padding: '4px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: 700 }}>
                         <UploadCloud size={14} /> Upload
                       </span>
                     ) : (
-                      <span className="box-badge box-badge-download">
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(107, 107, 107, 0.1)', color: '#6B6B6B', padding: '4px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: 700 }}>
                         <Download size={14} /> Download
                       </span>
                     )}
                   </td>
-                  <td className="box-td">{(item.size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
-                  <td className="box-td" style={{ color: 'var(--text-secondary)' }}>
+                  <td style={{ padding: '16px 24px', color: '#6B6B6B' }}>{(item.size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
+                  <td style={{ padding: '16px 24px', color: '#6B6B6B' }}>
                     {new Date(item.created_at).toLocaleString()}
                   </td>
                 </tr>

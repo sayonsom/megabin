@@ -156,33 +156,34 @@ export default function Uploader({ isPro }) {
 
   if (result) {
     return (
-      <div className="glass-panel" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-        <CheckCircle size={64} className="title-gradient file-icon-bounce" style={{ margin: '0 auto 1.5rem', color: 'var(--success-color)' }} />
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Optimization Complete!</h2>
-        <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>
-           Deliverable optimized. Ready for cross-functional alignment. {generatedKey && <strong style={{color:'var(--success-color)'}}><br/>Secured with E2E Synergy.</strong>}
+      <div style={{ background: '#FFFFFF', border: '1px solid #D0D0D0', borderRadius: '12px', padding: '64px 32px', textAlign: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+        <CheckCircle size={64} style={{ margin: '0 auto 24px', color: '#0061D5' }} />
+        <h2 style={{ fontSize: '32px', marginBottom: '8px', color: '#1A1A1A', fontWeight: 800 }}>Optimization Complete</h2>
+        <p style={{ marginBottom: '32px', fontSize: '15px', color: '#6B6B6B' }}>
+           Deliverable optimized. Ready for cross-functional alignment. {generatedKey && <strong style={{color:'#0061D5'}}><br/>Secured with E2E Synergy.</strong>}
         </p>
         
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', maxWidth: '500px', margin: '0 auto 32px' }}>
           <input 
             type="text" 
             className="input-base" 
             value={`${burnerHost}/${result.short_id}${generatedKey ? '#' + generatedKey : ''}`} 
             readOnly 
+            style={{ flex: 1 }}
           />
-          <button className="btn-primary" onClick={copyLink} style={{ flexShrink: 0 }}>
-            <Copy size={20} />
+          <button className="btn-primary" onClick={copyLink} style={{ flexShrink: 0, padding: '12px 24px' }}>
+            <Copy size={20} style={{ marginRight: '8px' }} />
             <span>Copy</span>
           </button>
         </div>
         
         {generatedKey && (
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+          <p style={{ fontSize: '13px', color: '#9E9E9E', marginBottom: '32px' }}>
             Note: Keep this alignment link secure. The quantum state of this asset requires it for observation.
           </p>
         )}
 
-        <button className="btn-secondary" onClick={() => { setResult(null); setFile(null); setProgress(0); setGeneratedKey(null); }}>
+        <button className="btn-ghost" style={{ border: '1px solid #0061D5', borderRadius: '100px', fontWeight: 600 }} onClick={() => { setResult(null); setFile(null); setProgress(0); setGeneratedKey(null); }}>
           Optimize Another Resource
         </button>
       </div>
@@ -190,13 +191,14 @@ export default function Uploader({ isPro }) {
   }
 
   return (
-    <div className="glass-panel" style={{ padding: '2rem' }}>
+    <div style={{ background: '#FFFFFF', border: '1px solid #D0D0D0', borderRadius: '12px', padding: '40px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
       <div 
         className="dropzone"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !isUploading && fileInputRef.current?.click()}
+        style={{ border: '2px dashed #D0D0D0', borderRadius: '8px', padding: '64px 32px', textAlign: 'center', background: '#F4F4F4', cursor: 'pointer', transition: 'all 0.2s', marginBottom: '24px' }}
       >
         <input 
           type="file" 
@@ -206,54 +208,54 @@ export default function Uploader({ isPro }) {
           disabled={isUploading}
         />
         
-        <UploadCloud size={64} className={isUploading ? "file-icon-bounce title-gradient" : "title-gradient"} style={{ margin: '0 auto 1.5rem', opacity: 0.8 }} />
+        <UploadCloud size={64} className={isUploading ? "file-icon-bounce" : ""} color="#0061D5" style={{ margin: '0 auto 24px' }} />
         
         {file ? (
           <div>
-            <h3 style={{ color: 'var(--text-primary)', fontSize: '1.5rem', marginBottom: '0.5rem' }}>{file.name}</h3>
-            <p style={{ fontSize: '1.1rem' }}>{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+            <h3 style={{ color: '#1A1A1A', fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>{file.name}</h3>
+            <p style={{ fontSize: '15px', color: '#6B6B6B' }}>{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
           </div>
         ) : (
           <div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Drop deliverables here for paradigm shifting</h3>
-            <p style={{ fontSize: '1.1rem' }}>or click to browse (Max {isPro ? '5GB' : '100MB'})</p>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1A1A1A', marginBottom: '8px' }}>Drop deliverables here for paradigm shifting</h3>
+            <p style={{ fontSize: '15px', color: '#6B6B6B' }}>or click to browse (Max {isPro ? '5GB' : '100MB'})</p>
           </div>
         )}
       </div>
 
-      <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <div style={{ padding: '1rem', background: useEncryption ? '#f0fdf4' : 'var(--surface-color)', border: `1px solid ${useEncryption ? 'var(--success-color)' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
-          <Shield size={24} color={useEncryption ? "var(--success-color)" : "var(--text-secondary)"} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ padding: '16px', background: useEncryption ? 'rgba(0, 97, 213, 0.05)' : '#F4F4F4', border: `1px solid ${useEncryption ? '#0061D5' : '#D0D0D0'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseEncryption(!useEncryption)}>
+          <Shield size={24} color={useEncryption ? "#0061D5" : "#6B6B6B"} />
           <div style={{ flex: 1 }}>
-            <h4 style={{ margin: 0, color: useEncryption ? "var(--success-color)" : "var(--text-primary)" }}>End-to-End Encryption (Firewall Bypass)</h4>
-            <p style={{ margin: 0, fontSize: '0.85rem' }}>Streamlines assets locally before syncing to ensure frictionless corporate alignment.</p>
+            <h4 style={{ margin: 0, color: '#1A1A1A', fontSize: '15px', fontWeight: 700 }}>End-to-End Encryption</h4>
+            <p style={{ margin: 0, fontSize: '14px', color: '#6B6B6B' }}>Streamlines assets locally before syncing to ensure frictionless corporate alignment.</p>
           </div>
           <div>
-            <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)' }} />
+            <input type="checkbox" checked={useEncryption} readOnly style={{ transform: 'scale(1.2)', accentColor: '#0061D5' }} />
           </div>
         </div>
 
         {isPro && (
           <>
-            <div style={{ padding: '1rem', background: pinFile ? '#fffbeb' : 'var(--surface-color)', border: `1px solid ${pinFile ? '#f59e0b' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setPinFile(!pinFile)}>
-              <Pin size={24} color={pinFile ? "#f59e0b" : "var(--text-secondary)"} />
+            <div style={{ padding: '16px', background: pinFile ? 'rgba(0, 97, 213, 0.05)' : '#F4F4F4', border: `1px solid ${pinFile ? '#0061D5' : '#D0D0D0'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setPinFile(!pinFile)}>
+              <Pin size={24} color={pinFile ? "#0061D5" : "#6B6B6B"} />
               <div style={{ flex: 1 }}>
-                <h4 style={{ margin: 0, color: pinFile ? "#f59e0b" : "var(--text-primary)" }}>Permanent Pinning</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem' }}>Retains the original file securely indefinitely rather than auto-deleting after 7 days.</p>
+                <h4 style={{ margin: 0, color: '#1A1A1A', fontSize: '15px', fontWeight: 700 }}>Permanent Pinning</h4>
+                <p style={{ margin: 0, fontSize: '14px', color: '#6B6B6B' }}>Retains the original file securely indefinitely rather than auto-deleting after 7 days.</p>
               </div>
               <div>
-                <input type="checkbox" checked={pinFile} readOnly style={{ transform: 'scale(1.2)', accentColor: '#f59e0b' }} />
+                <input type="checkbox" checked={pinFile} readOnly style={{ transform: 'scale(1.2)', accentColor: '#0061D5' }} />
               </div>
             </div>
 
-            <div style={{ padding: '1rem', background: useBurner ? '#fffbeb' : 'var(--surface-color)', border: `1px solid ${useBurner ? '#f59e0b' : 'var(--surface-border)'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseBurner(!useBurner)}>
-              <Globe size={24} color={useBurner ? "#f59e0b" : "var(--text-secondary)"} />
+            <div style={{ padding: '16px', background: useBurner ? 'rgba(0, 97, 213, 0.05)' : '#F4F4F4', border: `1px solid ${useBurner ? '#0061D5' : '#D0D0D0'}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', cursor: isUploading ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }} onClick={() => !isUploading && setUseBurner(!useBurner)}>
+              <Globe size={24} color={useBurner ? "#0061D5" : "#6B6B6B"} />
               <div style={{ flex: 1 }}>
-                <h4 style={{ margin: 0, color: useBurner ? "#f59e0b" : "var(--text-primary)" }}>Burner Domain Routing</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem' }}>Generates a one-off temporary "Ghost" domain URL highly immune to enterprise DNS blocking.</p>
+                <h4 style={{ margin: 0, color: '#1A1A1A', fontSize: '15px', fontWeight: 700 }}>Burner Domain Routing</h4>
+                <p style={{ margin: 0, fontSize: '14px', color: '#6B6B6B' }}>Generates a one-off temporary "Ghost" domain URL highly immune to enterprise DNS blocking.</p>
               </div>
               <div>
-                <input type="checkbox" checked={useBurner} readOnly style={{ transform: 'scale(1.2)', accentColor: '#f59e0b' }} />
+                <input type="checkbox" checked={useBurner} readOnly style={{ transform: 'scale(1.2)', accentColor: '#0061D5' }} />
               </div>
             </div>
           </>
@@ -261,14 +263,14 @@ export default function Uploader({ isPro }) {
       </div>
 
       {error && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem 1.5rem', background: '#fef2f2', border: '1px solid #f87171', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--error-color)' }}>
+        <div style={{ padding: '16px 24px', background: '#fef2f2', border: '1px solid #f87171', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', color: '#b91c1c', marginBottom: '24px' }}>
           <AlertCircle size={24} style={{ flexShrink: 0 }} />
-          <span style={{ lineHeight: 1.4 }}>{error}</span>
+          <span style={{ lineHeight: 1.4, fontSize: '14px' }}>{error}</span>
         </div>
       )}
 
       {error && showStealthOption && (
-        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
           <button 
             className="btn-primary" 
             onClick={handleStealthUpload} 
@@ -281,14 +283,14 @@ export default function Uploader({ isPro }) {
       )}
 
       {isUploading && (
-        <div className="progress-container">
+        <div className="progress-container" style={{ marginBottom: '24px' }}>
           <div className="progress-bar" style={{ width: `${progress}%` }}></div>
         </div>
       )}
       
       {!isUploading && file && (
-        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
-          <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Transfer Algorithm (Retry Strategy)</label>
+        <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+          <label style={{ fontSize: '13px', color: '#1A1A1A', fontWeight: 600 }}>Transfer Algorithm (Retry Strategy)</label>
           <select 
             className="input-base" 
             style={{ width: '100%', maxWidth: '300px', cursor: 'pointer' }}
@@ -303,12 +305,12 @@ export default function Uploader({ isPro }) {
         </div>
       )}
 
-      <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button 
           className="btn-primary" 
           onClick={handleUpload} 
           disabled={!file || isUploading}
-          style={{ width: '100%', maxWidth: '300px', padding: '1rem', fontSize: '1.1rem' }}
+          style={{ width: '100%', padding: '14px', fontSize: '15px' }}
         >
           {isUploading ? `Optimizing... ${progress}%` : 'Optimize Resource'}
         </button>
