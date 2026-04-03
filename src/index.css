@@ -14,6 +14,16 @@
   --error-color: #dc2626;
   
   --font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Marketing Tokens (Box.com Aesthetic) */
+  --marketing-bg: #FFFFFF;
+  --marketing-surface: #F9FAFB;
+  --marketing-navy: #0B192C; /* Deep Navy */
+  --marketing-charcoal: #1E293B; /* Charcoal */
+  --marketing-blue: #0056D2; /* Strong Box-like blue */
+  --marketing-text-primary: #121A26;
+  --marketing-text-secondary: #4A5568;
+  --marketing-border: #E2E8F0;
 }
 
 * {
@@ -272,4 +282,159 @@ p {
 .box-badge-download {
   background-color: #dcfce7;
   color: #166534;
+}
+
+/* ------------------------------------- */
+/* Marketing Page Styles (LandingPage)   */
+/* ------------------------------------- */
+
+.marketing-page {
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--marketing-bg);
+  color: var(--marketing-text-primary);
+  width: 100%;
+}
+
+.marketing-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 5%;
+}
+
+.marketing-section {
+  padding: 6rem 0;
+}
+
+.marketing-section-alt {
+  padding: 6rem 0;
+  background-color: var(--marketing-surface);
+}
+
+.marketing-section-dark {
+  padding: 6rem 0;
+  background-color: var(--marketing-navy);
+  color: #FFFFFF;
+}
+
+/* Typography Grid */
+.m-h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--marketing-navy);
+  margin-bottom: 1.5rem;
+}
+
+.m-lede {
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--marketing-text-secondary);
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+}
+
+.m-h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.m-h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--marketing-navy);
+}
+
+/* Layouts */
+.m-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+/* Panels */
+.m-panel {
+  background: #FFFFFF;
+  border: 1px solid var(--marketing-border);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 10px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* Visual Placeholders */
+.m-placeholder-image {
+  background: var(--marketing-surface);
+  border: 1px dashed #CBD5E1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.m-hero-image {
+  height: 500px;
+}
+
+.m-diagram-image {
+  height: 400px;
+}
+
+.m-infra-image {
+  height: 300px;
+}
+
+/* CTAs */
+.m-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.m-btn-primary {
+  background-color: var(--marketing-blue);
+  color: #FFFFFF;
+}
+
+.m-btn-primary:hover {
+  background-color: #0047B3;
+  transform: translateY(-1px);
+}
+
+.m-btn-secondary {
+  background-color: transparent;
+  color: var(--marketing-blue);
+  border: 2px solid var(--marketing-blue);
+}
+
+.m-btn-secondary:hover {
+  background-color: rgba(0, 86, 210, 0.05);
+}
+
+.m-btn-dark {
+  background-color: #FFFFFF;
+  color: var(--marketing-navy);
+}
+
+.m-btn-dark:hover {
+  background-color: #F8FAFC;
 }

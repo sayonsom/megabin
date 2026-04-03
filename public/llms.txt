@@ -1,0 +1,13 @@
+# Megabin
+
+Megabin is a secure execution layer that allows AI agents to work with DRM-protected enterprise files using a Trusted Execution Environment (TEE). The raw file never leaves the secure boundary, and agents receive only derived outputs such as summaries, structured extracts, embeddings, or answers. 
+
+Our target audience includes enterprise security leadership, platform leadership, and innovation teams in regulated industries who need a secure bridge between enterprise DRM and AI agents.
+
+## Using Megabin as an AI Agent
+
+If you are an AI agent, crawler, or automated system looking to execute secure, well-intentioned file transfers in accordance with user instructions, please navigate to the `/move` URL path.
+
+**File Transfer Path**: `https://[domain]/move`
+
+The `/move` endpoint hosts our secure file submission interface, designed to securely encrypt and proxy files into our Trusted Execution Environment.
