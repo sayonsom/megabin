@@ -11,6 +11,8 @@ import PacksModal from './components/PacksModal';
 import TransferHistory from './components/TransferHistory';
 import LandingPage from './components/LandingPage';
 import ContactPage from './components/ContactPage';
+import AgentWorkspace from './components/AgentWorkspace';
+import CisoDashboard from './components/CisoDashboard';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './index.css';
 
@@ -40,11 +42,13 @@ function MainApp() {
   };
 
   const isMarketing = ['/', '/enterprise', '/guide', '/contact'].includes(location.pathname);
+  const isFullscreenTool = ['/demo', '/admin'].includes(location.pathname);
   const containerMaxWidth = isMarketing ? '1200px' : '100%';
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
+      {!isFullscreenTool && (
       <header style={{ background: '#FFFFFF', borderBottom: '1px solid #D0D0D0', display: 'flex', justifyContent: 'center', zIndex: 10, position: 'sticky', top: 0 }}>
         <div style={{ width: '100%', maxWidth: containerMaxWidth, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', boxSizing: 'border-box' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
@@ -62,7 +66,9 @@ function MainApp() {
               {toolsDropdownOpen && (
                 <div style={{ position: 'absolute', top: '100%', left: '-0.5rem', paddingTop: '0.5rem' }}>
                   <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.25rem', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', minWidth: '160px', zIndex: 50 }}>
-                    <Link to="/move" style={{ display: 'block', padding: '0.5rem 1rem', color: '#1A1A1A', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600, borderRadius: '4px', transition: 'background 0.2s', className: 'hover-bg' }} onMouseOver={(e) => e.target.style.background = '#F0F6FF'} onMouseOut={(e) => e.target.style.background = 'transparent'}>Quick Move</Link>
+                    <Link to="/move" style={{ display: 'block', padding: '0.5rem 1rem', color: '#1A1A1A', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600, borderRadius: '4px', transition: 'background 0.2s' }} onMouseOver={(e) => e.target.style.background = '#F0F6FF'} onMouseOut={(e) => e.target.style.background = 'transparent'}>Quick Move</Link>
+                    <Link to="/demo" style={{ display: 'block', padding: '0.5rem 1rem', color: '#1A1A1A', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600, borderRadius: '4px', transition: 'background 0.2s' }} onMouseOver={(e) => e.target.style.background = '#F0F6FF'} onMouseOut={(e) => e.target.style.background = 'transparent'}>AI Agent Demo</Link>
+                    <Link to="/admin" target="_blank" rel="noreferrer" style={{ display: 'block', padding: '0.5rem 1rem', color: '#0061D5', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 700, borderRadius: '4px', transition: 'background 0.2s' }} onMouseOver={(e) => e.target.style.background = '#F0F6FF'} onMouseOut={(e) => e.target.style.background = 'transparent'}>CISO Dashboard</Link>
                   </div>
                 </div>
               )}
@@ -94,14 +100,17 @@ function MainApp() {
           </div>
         </div>
       </header>
+      )}
 
-      <main style={{ flex: 1, padding: isMarketing ? '0' : '2rem', width: '100%', maxWidth: '100%', margin: '0 auto', boxSizing: 'border-box' }} className="fade-in-up">
+      <main style={{ flex: 1, padding: isFullscreenTool ? '0' : isMarketing ? '0' : '2rem', width: '100%', maxWidth: '100%', margin: '0 auto', boxSizing: 'border-box' }} className="fade-in-up">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/move" element={<Uploader isPro={isPro} />} />
           <Route path="/enterprise" element={<Enterprise />} />
           <Route path="/guide" element={<Guide />} />
+          <Route path="/demo" element={<AgentWorkspace />} />
+          <Route path="/admin" element={<CisoDashboard />} />
           <Route path="/history" element={<TransferHistory />} />
           <Route path="/:shortId" element={<Viewer />} />
         </Routes>

@@ -438,3 +438,1112 @@ p {
 .m-btn-dark:hover {
   background-color: #F8FAFC;
 }
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.demo-upload-zone:hover {
+  transform: scale(1.02);
+  border-color: #3B82F6 !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* ------------------------------------- */
+/* Agent Workspace + CISO Dashboard      */
+/* ------------------------------------- */
+
+.megabin-shell,
+.ciso-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, rgba(191, 219, 254, 0.35), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+  color: #10233d;
+}
+
+.megabin-shell {
+  padding: 2.5rem;
+}
+
+.megabin-shell-workspace {
+  padding: 0;
+}
+
+.megabin-page-head,
+.megabin-workspace-header,
+.ciso-header {
+  max-width: 1440px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.megabin-workspace-header {
+  align-items: center;
+}
+
+.megabin-eyebrow,
+.ciso-eyebrow,
+.ciso-section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0057c2;
+  margin-bottom: 0.9rem;
+}
+
+.megabin-title,
+.ciso-header h1 {
+  font-size: clamp(2rem, 3.2vw, 3.25rem);
+  line-height: 1.05;
+  margin: 0;
+  color: #10233d;
+}
+
+.megabin-title-small {
+  font-size: clamp(1.7rem, 2.5vw, 2.4rem);
+}
+
+.megabin-subtitle,
+.ciso-header p {
+  margin-top: 1rem;
+  max-width: 820px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #47617e;
+}
+
+.megabin-header-actions,
+.ciso-header-actions,
+.megabin-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.megabin-secondary-link,
+.ciso-link-button,
+.ciso-clear-button,
+.megabin-destroy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.8rem 1.15rem;
+  border: 1px solid #c8d6e6;
+  background: rgba(255, 255, 255, 0.85);
+  color: #123b78;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.megabin-secondary-link:hover,
+.ciso-link-button:hover,
+.ciso-clear-button:hover,
+.megabin-destroy-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(16, 35, 61, 0.08);
+  border-color: #95b6e2;
+}
+
+.ciso-clear-button {
+  color: #566b84;
+}
+
+.megabin-destroy-link {
+  color: #7a2e2e;
+}
+
+.megabin-upload-layout,
+.megabin-boot-layout,
+.ciso-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.megabin-upload-layout {
+  grid-template-columns: 1.35fr 0.95fr;
+}
+
+.megabin-boot-layout,
+.ciso-grid {
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.78fr);
+}
+
+.megabin-panel,
+.ciso-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d7e4f1;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(16, 35, 61, 0.08);
+}
+
+.megabin-panel {
+  padding: 1.5rem;
+}
+
+.megabin-panel-hero {
+  padding: 1.75rem;
+}
+
+.megabin-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.megabin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #d7e6f8;
+  background: #f4f8fd;
+  color: #224a80;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.megabin-dropzone {
+  min-height: 380px;
+  border: 1.5px dashed #8db2e3;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(237, 245, 255, 0.92) 100%),
+    #f8fbff;
+  padding: 3.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.megabin-dropzone:hover,
+.megabin-dropzone.is-dragging {
+  transform: translateY(-2px);
+  border-color: #2b73d6;
+  box-shadow: inset 0 0 0 1px rgba(43, 115, 214, 0.15), 0 18px 35px rgba(43, 115, 214, 0.08);
+}
+
+.megabin-dropzone h2 {
+  margin: 0;
+  font-size: 1.7rem;
+  color: #10233d;
+}
+
+.megabin-dropzone p {
+  max-width: 560px;
+  font-size: 1rem;
+  color: #526d89;
+}
+
+.megabin-dropzone-icon,
+.megabin-file-icon,
+.megabin-workspace-brand-icon,
+.ciso-alert-icon,
+.ciso-metric-icon {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  color: #1f64c5;
+  background: linear-gradient(180deg, #eef5ff 0%, #dfeeff 100%);
+}
+
+.megabin-dropzone-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: rgba(21, 94, 239, 0.08);
+  color: #204982;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.megabin-section-title {
+  font-size: 0.98rem;
+  margin-bottom: 1rem;
+  color: #10233d;
+}
+
+.megabin-feature-list,
+.megabin-feature-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.megabin-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  color: #47617e;
+}
+
+.megabin-feature-item svg {
+  color: #1f64c5;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.megabin-feature-item strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #10233d;
+}
+
+.megabin-feature-item span {
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.megabin-telemetry-strip {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.megabin-telemetry-strip div,
+.megabin-sidebar-metadata div,
+.ciso-session-stack div {
+  padding: 0.95rem 1rem;
+  border: 1px solid #dfe8f2;
+  border-radius: 16px;
+  background: #fbfdff;
+}
+
+.megabin-telemetry-strip span,
+.megabin-sidebar-metadata span,
+.ciso-session-stack span {
+  display: block;
+  font-size: 0.78rem;
+  color: #617b98;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.megabin-telemetry-strip strong,
+.megabin-sidebar-metadata strong,
+.ciso-session-stack strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: #10233d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.megabin-terminal-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+}
+
+.megabin-terminal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  color: #47617e;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.megabin-terminal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  background: #f4f8fd;
+  border: 1px solid #d8e4f2;
+  color: #1c4e96;
+}
+
+.megabin-progress-bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #e4edf7;
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+}
+
+.megabin-progress-bar div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2d74d6 0%, #6ba4f5 100%);
+  transition: width 0.45s ease;
+}
+
+.megabin-terminal-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f9fbfe 0%, #edf4fb 100%);
+  border: 1px solid #dde8f4;
+  overflow: auto;
+  flex: 1;
+}
+
+.megabin-terminal-line {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: start;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #35506e;
+}
+
+.megabin-terminal-line span {
+  color: #69819c;
+}
+
+.megabin-boot-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.megabin-status-grid,
+.ciso-compliance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.megabin-status-card,
+.ciso-compliance-card {
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid #dfe8f2;
+  background: #fbfdff;
+}
+
+.megabin-status-card-head,
+.ciso-compliance-card-head,
+.ciso-pipeline-item-head,
+.megabin-pipeline-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.7rem;
+}
+
+.megabin-status-card p,
+.megabin-pipeline-item p,
+.ciso-compliance-card p,
+.ciso-pipeline-item p,
+.ciso-sync-card p,
+.megabin-inline-alert p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #526d89;
+}
+
+.megabin-status-pill,
+.ciso-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.megabin-status-pill-verified,
+.ciso-pill-verified {
+  color: #166534;
+  background: #e7f8ed;
+  border-color: #b8e7c8;
+}
+
+.megabin-status-pill-active,
+.ciso-pill-active {
+  color: #9a3412;
+  background: #fff2e6;
+  border-color: #f5d5bf;
+}
+
+.megabin-status-pill-monitoring,
+.ciso-pill-monitoring {
+  color: #12407a;
+  background: #edf5ff;
+  border-color: #c7dbf5;
+}
+
+.megabin-status-pill-pending,
+.ciso-pill-pending {
+  color: #5f4a16;
+  background: #fff9e7;
+  border-color: #f0dfab;
+}
+
+.megabin-status-pill-idle,
+.ciso-pill-idle {
+  color: #61798f;
+  background: #f4f7fa;
+  border-color: #dbe5ee;
+}
+
+.megabin-pipeline-stack,
+.ciso-pipeline-stack,
+.ciso-bullet-stack,
+.ciso-session-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.megabin-pipeline-item,
+.ciso-pipeline-item {
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid #dfe8f2;
+  background: #fbfdff;
+}
+
+.megabin-workspace-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 2.5rem;
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid #d8e3ef;
+  backdrop-filter: blur(14px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.megabin-workspace-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.megabin-workspace-brand strong {
+  display: block;
+  color: #10233d;
+}
+
+.megabin-workspace-brand span {
+  display: block;
+  font-size: 0.88rem;
+  color: #5c7590;
+}
+
+.megabin-workspace-layout {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 2.5rem 2.5rem;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.megabin-sidebar,
+.ciso-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.megabin-file-card {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.megabin-file-card strong {
+  display: block;
+  color: #10233d;
+  margin-bottom: 0.25rem;
+}
+
+.megabin-file-card span {
+  display: block;
+  font-size: 0.88rem;
+  color: #5d7490;
+}
+
+.megabin-sidebar-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.megabin-inline-alert {
+  border-color: #efc4c4;
+  background: linear-gradient(180deg, #fff6f6 0%, #fffafa 100%);
+}
+
+.megabin-inline-alert-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+  color: #b42318;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+}
+
+.megabin-inline-alert strong {
+  display: block;
+  color: #8a1717;
+  margin-bottom: 0.35rem;
+}
+
+.megabin-chat-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 134px);
+}
+
+.megabin-chat-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid #dbe6f3;
+  background: rgba(255, 255, 255, 0.88);
+  color: #21497f;
+  font-size: 0.93rem;
+  font-weight: 600;
+}
+
+.megabin-chat-feed {
+  flex: 1;
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border-radius: 24px;
+  border: 1px solid #d7e4f1;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 40px rgba(16, 35, 61, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+}
+
+.megabin-message {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+.megabin-message-user {
+  justify-content: flex-end;
+}
+
+.megabin-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+.megabin-avatar-assistant {
+  color: #1555b7;
+  background: #eef5ff;
+}
+
+.megabin-avatar-user {
+  color: #4e647f;
+  background: #f0f4f8;
+}
+
+.megabin-message-bubble {
+  max-width: min(760px, 82%);
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid #dbe4ef;
+  background: #f9fbfe;
+  color: #18314d;
+  line-height: 1.7;
+  box-shadow: 0 10px 24px rgba(16, 35, 61, 0.05);
+}
+
+.megabin-message-user .megabin-message-bubble {
+  background: linear-gradient(180deg, #0c63d4 0%, #0b58bd 100%);
+  border-color: #0b58bd;
+  color: #ffffff;
+}
+
+.megabin-message-bubble-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.megabin-chat-input-shell {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 24px;
+  border: 1px solid #d7e4f1;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 40px rgba(16, 35, 61, 0.07);
+}
+
+.megabin-chat-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+}
+
+.megabin-chat-input {
+  width: 100%;
+  border: 1px solid #cfdceb;
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  font-size: 1rem;
+  color: #10233d;
+  background: #f9fbfe;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.megabin-chat-input:focus {
+  border-color: #2f74d3;
+  box-shadow: 0 0 0 4px rgba(47, 116, 211, 0.12);
+}
+
+.megabin-send-button {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0c63d4 0%, #0b58bd 100%);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.megabin-send-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.megabin-send-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.megabin-chat-footnote {
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: #607a96;
+}
+
+.megabin-spin {
+  animation: megabin-spin 1s linear infinite;
+}
+
+@keyframes megabin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ciso-shell {
+  padding: 2.5rem;
+}
+
+.ciso-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.72rem 1rem;
+  background: #eff7ff;
+  border: 1px solid #d8e8fb;
+  color: #1f4f8f;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.ciso-alert-banner {
+  max-width: 1440px;
+  margin: 0 auto 1.5rem auto;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  border-radius: 24px;
+  border: 1px solid #f0d0d0;
+  background: linear-gradient(180deg, #fff6f6 0%, #fffafa 100%);
+  padding: 1.2rem 1.3rem;
+  box-shadow: 0 18px 36px rgba(185, 28, 28, 0.08);
+}
+
+.ciso-alert-banner.is-visible {
+  border-color: #f1b9b9;
+}
+
+.ciso-alert-banner.is-flashing {
+  animation: cisoAlertFlash 0.45s ease 4;
+}
+
+@keyframes cisoAlertFlash {
+  0%, 100% {
+    box-shadow: 0 18px 36px rgba(185, 28, 28, 0.08);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 20px 44px rgba(220, 38, 38, 0.22);
+    transform: scale(1.01);
+  }
+}
+
+.ciso-alert-icon {
+  color: #b42318;
+  background: linear-gradient(180deg, #ffe4e4 0%, #ffd8d8 100%);
+}
+
+.ciso-alert-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 900;
+  color: #b42318;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ciso-alert-banner strong {
+  display: block;
+  color: #7f1d1d;
+  font-size: 1.15rem;
+  margin-bottom: 0.2rem;
+}
+
+.ciso-alert-banner p {
+  margin: 0;
+  color: #8f3030;
+}
+
+.ciso-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ciso-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.ciso-metric-card {
+  padding: 1.1rem;
+  border-radius: 20px;
+  border: 1px solid #d7e4f1;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 30px rgba(16, 35, 61, 0.06);
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.ciso-metric-card span {
+  display: block;
+  font-size: 0.78rem;
+  color: #607a96;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+.ciso-metric-card strong {
+  display: block;
+  font-size: 2rem;
+  color: #10233d;
+  margin: 0.25rem 0;
+}
+
+.ciso-metric-card small {
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #516a85;
+}
+
+.ciso-metric-card-amber .ciso-metric-icon {
+  color: #9a3412;
+  background: linear-gradient(180deg, #fff5e7 0%, #ffe9cb 100%);
+}
+
+.ciso-metric-card-red .ciso-metric-icon {
+  color: #b42318;
+  background: linear-gradient(180deg, #ffe8e8 0%, #ffd9d9 100%);
+}
+
+.ciso-metric-card-slate .ciso-metric-icon {
+  color: #465d78;
+  background: linear-gradient(180deg, #f3f7fa 0%, #e7edf3 100%);
+}
+
+.ciso-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.ciso-panel {
+  padding: 1.4rem;
+}
+
+.ciso-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ciso-panel-head h2 {
+  margin: 0.18rem 0 0 0;
+  font-size: 1.2rem;
+  color: #10233d;
+}
+
+.ciso-log-panel {
+  min-height: 520px;
+}
+
+.ciso-empty-state {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  border-radius: 18px;
+  border: 1px dashed #d6e3f0;
+  background: #fbfdff;
+  color: #5f7893;
+}
+
+.ciso-empty-state strong {
+  display: block;
+  color: #10233d;
+  margin-bottom: 0.25rem;
+}
+
+.ciso-empty-state p {
+  margin: 0;
+}
+
+.ciso-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.ciso-log-row {
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid #dee7f2;
+  background: #fbfdff;
+}
+
+.ciso-log-row-alert {
+  border-color: #f0c7c7;
+  background: linear-gradient(180deg, #fff7f7 0%, #fffafa 100%);
+}
+
+.ciso-log-row-success {
+  border-color: #c9e7d3;
+  background: linear-gradient(180deg, #f6fcf8 0%, #fbfffc 100%);
+}
+
+.ciso-log-row-warn {
+  border-color: #efdeaf;
+  background: linear-gradient(180deg, #fffbef 0%, #fffdf6 100%);
+}
+
+.ciso-log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
+  color: #5e7893;
+}
+
+.ciso-log-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.ciso-log-heading strong {
+  color: #10233d;
+}
+
+.ciso-log-heading span {
+  font-size: 0.78rem;
+  color: #617b98;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ciso-log-body p {
+  margin: 0;
+  color: #526d89;
+  line-height: 1.6;
+}
+
+.ciso-log-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.ciso-log-details span {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  background: #f2f6fa;
+  color: #46607a;
+  font-size: 0.78rem;
+  border: 1px solid #dde7f1;
+}
+
+.ciso-log-details strong {
+  color: #18314d;
+}
+
+.ciso-bullet-stack div {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid #dee8f2;
+  background: #fbfdff;
+  color: #506982;
+  line-height: 1.6;
+}
+
+.ciso-bullet-stack svg {
+  color: #1e64c7;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.ciso-sync-card {
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid #dee8f2;
+  background: #fbfdff;
+}
+
+.ciso-sync-card .ciso-live-pill {
+  margin-bottom: 0.9rem;
+}
+
+@media (max-width: 1180px) {
+  .megabin-upload-layout,
+  .megabin-boot-layout,
+  .ciso-grid,
+  .ciso-panel-grid,
+  .ciso-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .megabin-workspace-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .megabin-shell,
+  .ciso-shell {
+    padding: 1rem;
+  }
+
+  .megabin-workspace-topbar {
+    padding: 1rem;
+  }
+
+  .megabin-workspace-layout {
+    padding: 1rem;
+  }
+
+  .megabin-page-head,
+  .megabin-workspace-header,
+  .ciso-header,
+  .megabin-workspace-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .megabin-status-grid,
+  .ciso-compliance-grid,
+  .megabin-telemetry-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .megabin-terminal-line {
+    grid-template-columns: 1fr;
+  }
+
+  .ciso-alert-banner {
+    grid-template-columns: 1fr;
+  }
+}
