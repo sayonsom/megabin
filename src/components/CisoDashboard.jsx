@@ -273,12 +273,24 @@ export default function CisoDashboard() {
                 <strong>{telemetry.session.stageLabel}</strong>
               </div>
               <div>
+                <span>Source</span>
+                <strong>{telemetry.session.sourceLabel}</strong>
+              </div>
+              <div>
                 <span>File size</span>
                 <strong>{formatFileSize(telemetry.session.fileSizeBytes)}</strong>
               </div>
               <div>
                 <span>Classification</span>
                 <strong>{telemetry.session.classification}</strong>
+              </div>
+              <div>
+                <span>Ingress adapter</span>
+                <strong>{telemetry.session.edgeAdapter || 'browser-upload'}</strong>
+              </div>
+              <div>
+                <span>Edge session</span>
+                <strong>{telemetry.session.edgeSessionId || 'Not attached'}</strong>
               </div>
               <div>
                 <span>Started</span>
@@ -330,6 +342,9 @@ export default function CisoDashboard() {
                 <Activity size={14} />
                 Storage-event transport active
               </div>
+              <p>
+                Local ingress path: <strong>{telemetry.session.edgeSessionId ? telemetry.session.sourceLabel : 'Browser upload fallback'}</strong>
+              </p>
               <p>
                 Last dashboard update: <strong>{formatTimestamp(telemetry.updatedAt)}</strong>
               </p>

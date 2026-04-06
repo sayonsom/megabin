@@ -29,6 +29,13 @@ import {
   updateSessionState,
   updateTelemetryState,
 } from '../utils/telemetry';
+import {
+  captureActiveOfficeDocument,
+  captureClipboardPdf,
+  deleteEdgeSession,
+  getEdgeHealth,
+  queryEdgeSession,
+} from '../utils/edge';
 
 const BOOT_STEPS = [
   {
@@ -220,6 +227,24 @@ const DEFAULT_RESPONSE =
 
 const complianceBadges = ['FIPS 140-3', 'SOC 2', 'HIPAA', 'ITAR'];
 
+const EDGE_CAPTURE_ACTIONS = [
+  {
+    key: 'excel',
+    label: 'Capture active Excel',
+    description: 'Open the protected workbook in Excel first, then import the active Samsung-authorized window.',
+  },
+  {
+    key: 'word',
+    label: 'Capture active Word',
+    description: 'Import the document that is already open inside the authorized Word session.',
+  },
+  {
+    key: 'powerpoint',
+    label: 'Capture active PowerPoint',
+    description: 'Pull slide text and notes from the currently open PowerPoint deck.',
+  },
+];
+
 function classifyFile(file) {
   const extension = file.name.split('.').pop()?.toLowerCase();
 
@@ -236,6 +261,83 @@ function classifyFile(file) {
   }
 
   return 'Protected corporate file / DRM-managed payload';
+}
+
+function classifyEdgeDocument(documentKind) {
+  if (documentKind === 'excel') {
+    return 'Financial workbook / Samsung-authorized Office session';
+  }
+
+  if (documentKind === 'word') {
+    return 'Sensitive operating document / Samsung-authorized Word session';
+  }
+
+  if (documentKind === 'powerpoint') {
+    return 'Executive presentation / Samsung-authorized PowerPoint session';
+  }
+
+  if (documentKind === 'clipboard') {
+    return 'Protected PDF / viewer clipboard import from authorized desktop';
+  }
+
+  return 'Protected corporate file / Samsung-authorized desktop session';
+}
+
+function edgeMimeType(documentKind) {
+  if (documentKind === 'excel') {
+    return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  }
+
+  if (documentKind === 'word') {
+    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  }
+
+  if (documentKind === 'powerpoint') {
+    return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  }
+
+  if (documentKind === 'clipboard') {
+    return 'application/pdf';
+  }
+
+  return 'application/octet-stream';
+}
+
+function defaultEdgeFileName(documentKind) {
+  if (documentKind === 'excel') {
+    return 'Authorized-Workbook.xlsx';
+  }
+
+  if (documentKind === 'word') {
+    return 'Authorized-Document.docx';
+  }
+
+  if (documentKind === 'powerpoint') {
+    return 'Authorized-Deck.pptx';
+  }
+
+  if (documentKind === 'clipboard') {
+    return 'Authorized-PDF.pdf';
+  }
+
+  return 'Authorized-File.bin';
+}
+
+function buildEdgeVirtualFile(edgeSession) {
+  const fallbackName = defaultEdgeFileName(edgeSession.documentKind);
+  const normalizedTitle = String(edgeSession.title || '').trim();
+  const fileName = normalizedTitle || fallbackName;
+  const estimatedBytes = edgeSession.bytesCaptured || Math.max((edgeSession.chunkCount || 0) * 240, 2048);
+
+  return {
+    name: fileName,
+    size: estimatedBytes,
+    type: edgeMimeType(edgeSession.documentKind),
+  };
+}
+
+function buildEdgeIntroMessage(edgeSession) {
+  return `Megabin sealed around ${edgeSession.title || defaultEdgeFileName(edgeSession.documentKind)}. The Samsung-authorized ${edgeSession.documentKind} session is ready for governed prompts.`;
 }
 
 function analyzePromptSensitivity(prompt) {
@@ -304,6 +406,18 @@ function StatusPill({ status }) {
   );
 }
 
+function EdgeHealthPill({ health }) {
+  return (
+    <div className={`megabin-edge-status megabin-edge-status-${health.status}`}>
+      <Activity size={14} className={health.status === 'checking' ? 'megabin-spin' : ''} />
+      {health.status === 'checking' && 'Checking local Edge'}
+      {health.status === 'online' && health.windowsReady && 'Samsung Edge ready'}
+      {health.status === 'online' && !health.windowsReady && 'Edge reachable, but not Windows-ready'}
+      {health.status === 'offline' && 'Megabin Edge offline'}
+    </div>
+  );
+}
+
 export default function AgentWorkspace() {
   const [workspaceStep, setWorkspaceStep] = useState('upload');
   const [file, setFile] = useState(null);
@@ -312,24 +426,65 @@ export default function AgentWorkspace() {
     {
       role: 'assistant',
       content:
-        'Open the CISO Dashboard on a second monitor, then drop in a file. Megabin will boot a governed enclave and stream every attestation event live.',
+        'Open the CISO Dashboard on a second monitor, then drop in a file or import an authorized Samsung desktop session. Megabin will boot a governed enclave and stream every attestation event live.',
     },
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [telemetry, setTelemetry] = useState(getTelemetryState);
+  const [edgeHealth, setEdgeHealth] = useState({
+    status: 'checking',
+    windowsReady: false,
+    activeSessions: 0,
+    error: '',
+  });
+  const [isEdgeCapturing, setIsEdgeCapturing] = useState(false);
+  const [edgeCaptureError, setEdgeCaptureError] = useState('');
 
   const bootTimerRef = useRef(null);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    return subscribeToTelemetryState(setTelemetry);
-  }, []);
+  useEffect(() => subscribeToTelemetryState(setTelemetry), []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    const probeEdge = async () => {
+      try {
+        const health = await getEdgeHealth();
+        if (!disposed) {
+          setEdgeHealth({
+            status: 'online',
+            windowsReady: Boolean(health.windowsReady),
+            activeSessions: health.activeSessions || 0,
+            error: '',
+          });
+        }
+      } catch (error) {
+        if (!disposed) {
+          setEdgeHealth({
+            status: 'offline',
+            windowsReady: false,
+            activeSessions: 0,
+            error: error.message,
+          });
+        }
+      }
+    };
+
+    probeEdge();
+    const intervalId = window.setInterval(probeEdge, 5000);
+
+    return () => {
+      disposed = true;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -339,12 +494,15 @@ export default function AgentWorkspace() {
     };
   }, []);
 
-  const initializeSession = (selectedFile) => {
+  const initializeSession = (selectedFile, sessionOptions = {}) => {
     if (bootTimerRef.current) {
       window.clearInterval(bootTimerRef.current);
     }
 
-    const classification = classifyFile(selectedFile);
+    const classification = sessionOptions.classification || classifyFile(selectedFile);
+    const introMessage =
+      sessionOptions.introMessage ||
+      `Megabin sealed around ${selectedFile.name}. Ask for a summary, risk review, or compliance-sensitive takeaway once boot completes.`;
 
     setFile(selectedFile);
     setBootLogs([]);
@@ -354,15 +512,18 @@ export default function AgentWorkspace() {
     setMessages([
       {
         role: 'assistant',
-        content: `Megabin sealed around ${selectedFile.name}. Ask for a summary, risk review, or compliance-sensitive takeaway once boot completes.`,
+        content: introMessage,
       },
     ]);
 
     resetTelemetryState({
       fileName: selectedFile.name,
       fileSizeBytes: selectedFile.size,
-      fileType: selectedFile.type || 'Unknown',
+      fileType: sessionOptions.fileType || selectedFile.type || 'Unknown',
       classification,
+      sourceLabel: sessionOptions.sourceLabel || 'Browser upload',
+      edgeSessionId: sessionOptions.edgeSessionId || null,
+      edgeAdapter: sessionOptions.edgeAdapter || null,
     });
 
     updateTelemetryState((state) => ({
@@ -405,11 +566,16 @@ export default function AgentWorkspace() {
     appendTelemetryLog({
       severity: 'INFO',
       category: 'SESSION',
-      title: 'Protected file admitted',
-      message: 'A file entered the Agent Workspace and Megabin began preparing a controlled enclave session.',
+      title: sessionOptions.sourceLabel?.includes('Samsung Edge') ? 'Samsung-authorized session admitted' : 'Protected file admitted',
+      message:
+        sessionOptions.sourceLabel?.includes('Samsung Edge')
+          ? 'Megabin Edge imported a Samsung-authorized local document session and began preparing a controlled enclave.'
+          : 'A file entered the Agent Workspace and Megabin began preparing a controlled enclave session.',
       details: {
         file: selectedFile.name,
         size: formatFileSize(selectedFile.size),
+        source: sessionOptions.sourceLabel || 'Browser upload',
+        adapter: sessionOptions.edgeAdapter || 'browser-upload',
       },
     });
 
@@ -476,6 +642,7 @@ export default function AgentWorkspace() {
       return;
     }
 
+    setEdgeCaptureError('');
     initializeSession(selectedFile);
   };
 
@@ -500,6 +667,78 @@ export default function AgentWorkspace() {
     handleFileSelection(event.dataTransfer.files?.[0]);
   };
 
+  const handleEdgeCapture = async (documentKind) => {
+    setEdgeCaptureError('');
+    setIsEdgeCapturing(true);
+
+    try {
+      const payload = await captureActiveOfficeDocument(documentKind);
+      const edgeSession = payload.session;
+      const virtualFile = buildEdgeVirtualFile(edgeSession);
+
+      initializeSession(virtualFile, {
+        classification: classifyEdgeDocument(edgeSession.documentKind),
+        sourceLabel: `Samsung Edge / active ${edgeSession.documentKind} session`,
+        edgeSessionId: edgeSession.id,
+        edgeAdapter: edgeSession.adapter,
+        fileType: virtualFile.type,
+        introMessage: buildEdgeIntroMessage(edgeSession),
+      });
+
+      appendTelemetryLog({
+        severity: 'SUCCESS',
+        category: 'EDGE',
+        title: 'Megabin Edge imported an authorized Office session',
+        message: `Megabin Edge captured the active ${edgeSession.documentKind} document from the Samsung-authorized desktop and handed it to the enclave bootstrap.`,
+        details: {
+          edge_session: edgeSession.id,
+          adapter: edgeSession.adapter,
+          chunks: edgeSession.chunkCount,
+        },
+      });
+    } catch (error) {
+      setEdgeCaptureError(error.message);
+    } finally {
+      setIsEdgeCapturing(false);
+    }
+  };
+
+  const handlePdfCapture = async () => {
+    setEdgeCaptureError('');
+    setIsEdgeCapturing(true);
+
+    try {
+      const payload = await captureClipboardPdf('Samsung-authorized PDF import');
+      const edgeSession = payload.session;
+      const virtualFile = buildEdgeVirtualFile(edgeSession);
+
+      initializeSession(virtualFile, {
+        classification: classifyEdgeDocument(edgeSession.documentKind),
+        sourceLabel: 'Samsung Edge / PDF clipboard import',
+        edgeSessionId: edgeSession.id,
+        edgeAdapter: edgeSession.adapter,
+        fileType: virtualFile.type,
+        introMessage: 'Megabin sealed around the copied PDF text from the Samsung-authorized viewer. The governed enclave is ready for prompt screening.',
+      });
+
+      appendTelemetryLog({
+        severity: 'SUCCESS',
+        category: 'EDGE',
+        title: 'Megabin Edge imported PDF text from clipboard',
+        message: 'Megabin Edge received the copied text from the Samsung-authorized PDF viewer and handed it to the enclave bootstrap.',
+        details: {
+          edge_session: edgeSession.id,
+          adapter: edgeSession.adapter,
+          chunks: edgeSession.chunkCount,
+        },
+      });
+    } catch (error) {
+      setEdgeCaptureError(error.message);
+    } finally {
+      setIsEdgeCapturing(false);
+    }
+  };
+
   const handleSendMessage = (event) => {
     event.preventDefault();
     const prompt = inputValue.trim();
@@ -508,7 +747,7 @@ export default function AgentWorkspace() {
     }
 
     const sensitivity = analyzePromptSensitivity(prompt);
-    const response = resolveAgentResponse(prompt);
+    const edgeSessionId = telemetry.session.edgeSessionId;
 
     setMessages((currentMessages) => [...currentMessages, { role: 'user', content: prompt }]);
     setInputValue('');
@@ -522,6 +761,7 @@ export default function AgentWorkspace() {
       details: {
         prompt_length: prompt.length,
         outbound_path: 'Megabin -> DLP Broker -> LLM Gateway',
+        source: telemetry.session.sourceLabel,
       },
     });
 
@@ -558,21 +798,56 @@ export default function AgentWorkspace() {
         summary: `${sensitivity.scrubbedCount} sensitive objects were scrubbed from the last prompt before gateway transit.`,
       });
 
-      window.setTimeout(() => {
+      window.setTimeout(async () => {
+        let response = resolveAgentResponse(prompt);
+        let responseDetails = {
+          response_length: response.length,
+          raw_payload: 'never exposed',
+          backend: 'demo-preset',
+        };
+        let responseSeverity = 'SUCCESS';
+        let responseTitle = 'Derived answer returned to workspace';
+        let responseMessage = 'The LLM Gateway returned a derived answer to the sealed Agent Workspace.';
+
+        if (edgeSessionId) {
+          try {
+            const edgeResponse = await queryEdgeSession(edgeSessionId, prompt);
+            response = edgeResponse.answer || response;
+            responseDetails = {
+              response_length: response.length,
+              raw_payload: 'never exposed',
+              backend: edgeResponse.backend || 'edge-local',
+              edge_session: edgeResponse.session?.id || edgeSessionId,
+              citations: edgeResponse.citations?.length || 0,
+            };
+            responseMessage = 'Megabin Edge returned a derived answer from the Samsung-authorized local document session.';
+          } catch (error) {
+            response = `Megabin Edge could not answer from the local Samsung session: ${error.message}`;
+            responseDetails = {
+              response_length: response.length,
+              raw_payload: 'never exposed',
+              backend: 'edge-error',
+              edge_session: edgeSessionId,
+            };
+            responseSeverity = 'WARN';
+            responseTitle = 'Megabin Edge query failed';
+            responseMessage = 'The governed prompt completed DLP screening, but the local Edge session could not return an answer.';
+          }
+        }
+
         appendTelemetryLog({
-          severity: 'SUCCESS',
+          severity: responseSeverity,
           category: 'GATEWAY',
-          title: 'Derived answer returned to workspace',
-          message: 'The LLM Gateway returned a derived answer to the sealed Agent Workspace.',
-          details: {
-            response_length: response.length,
-            raw_payload: 'never exposed',
-          },
+          title: responseTitle,
+          message: responseMessage,
+          details: responseDetails,
         });
 
         updatePipelineState('gateway', {
           status: 'monitoring',
-          summary: 'Gateway idle and awaiting the next governed prompt.',
+          summary: edgeSessionId
+            ? 'Gateway idle while Megabin Edge remains attached to the Samsung-authorized document session.'
+            : 'Gateway idle and awaiting the next governed prompt.',
         });
 
         setMessages((currentMessages) => [...currentMessages, { role: 'assistant', content: response }]);
@@ -582,12 +857,21 @@ export default function AgentWorkspace() {
   };
 
   const endSession = () => {
+    if (telemetry.session.edgeSessionId) {
+      deleteEdgeSession(telemetry.session.edgeSessionId).catch(() => {});
+    }
+
     appendTelemetryLog({
       severity: 'WARN',
       category: 'SESSION',
       title: 'Workspace closed by operator',
       message: 'The active Megabin workspace was closed and volatile memory was marked for destruction.',
+      details: {
+        source: telemetry.session.sourceLabel,
+        edge_session: telemetry.session.edgeSessionId || 'n/a',
+      },
     });
+
     updateSessionState({
       status: 'destroyed',
       stageLabel: 'Enclave destroyed by operator',
@@ -595,6 +879,8 @@ export default function AgentWorkspace() {
   };
 
   const verifiedControls = Object.values(telemetry.compliance).filter((item) => item.status === 'verified').length;
+  const edgeReady = edgeHealth.status === 'online' && edgeHealth.windowsReady;
+  const edgeBusy = isEdgeCapturing || workspaceStep === 'booting';
 
   if (workspaceStep === 'upload') {
     return (
@@ -602,7 +888,7 @@ export default function AgentWorkspace() {
         <div className="megabin-page-head">
           <div>
             <span className="megabin-eyebrow">Megabin Demo Workspace</span>
-            <h1 className="megabin-title">Drop a DRM-managed file and boot a governed agent enclave.</h1>
+            <h1 className="megabin-title">Drop a DRM-managed file or import a Samsung-authorized session.</h1>
             <p className="megabin-subtitle">
               This workspace keeps the Box-like product feel simple while showing the hard parts: FIPS 140-3 attestation,
               SOC 2 evidence, HIPAA-aware prompt screening, ITAR guardrails, and derived-output-only model traffic.
@@ -639,10 +925,77 @@ export default function AgentWorkspace() {
                 <UploadCloud size={26} />
               </div>
               <h2>Deploy a protected file into Megabin</h2>
-              <p>Drag and drop or click to load a DRM-protected spreadsheet, PDF, deck, or design file.</p>
+              <p>Drag and drop or click to load a browser-side spreadsheet, PDF, deck, or design file for the generic demo path.</p>
               <div className="megabin-dropzone-hint">
-                During your pitch, keep this workspace on one screen and the live CISO Dashboard on another.
+                For the Samsung pitch, keep this workspace on one screen and the live CISO Dashboard on another.
               </div>
+            </div>
+
+            <div className="megabin-edge-card">
+              <div className="megabin-edge-head">
+                <div>
+                  <span className="megabin-section-kicker">Samsung Edge capture</span>
+                  <h3>Import the file from the Samsung-authorized desktop instead of the browser.</h3>
+                </div>
+                <EdgeHealthPill health={edgeHealth} />
+              </div>
+
+              <p className="megabin-edge-copy">
+                Open the protected file first in Excel, Word, or PowerPoint on the Samsung laptop. Megabin Edge will read the
+                already-authorized desktop session and hand the governed extract to this workspace. For PDFs, copy the visible text
+                in the approved viewer, then use the PDF import button below.
+              </p>
+
+              <div className="megabin-edge-action-grid">
+                {EDGE_CAPTURE_ACTIONS.map((action) => (
+                  <button
+                    key={action.key}
+                    type="button"
+                    className="megabin-edge-action"
+                    onClick={() => handleEdgeCapture(action.key)}
+                    disabled={!edgeReady || edgeBusy}
+                  >
+                    <strong>{action.label}</strong>
+                    <span>{action.description}</span>
+                  </button>
+                ))}
+
+                <button type="button" className="megabin-edge-action" onClick={handlePdfCapture} disabled={!edgeReady || edgeBusy}>
+                  <strong>Import copied PDF text</strong>
+                  <span>After selecting all text in the approved PDF viewer, pull the clipboard into Megabin Edge.</span>
+                </button>
+              </div>
+
+              <div className="megabin-edge-footer">
+                <div>
+                  <span>Local Edge</span>
+                  <strong>{edgeReady ? 'Listening on 127.0.0.1:8787' : 'Start `start.bat` on the Samsung laptop'}</strong>
+                </div>
+                <div>
+                  <span>Active Edge sessions</span>
+                  <strong>{edgeHealth.activeSessions}</strong>
+                </div>
+                <div>
+                  <span>Import path</span>
+                  <strong>{'Samsung-authorized app -> Edge -> Megabin'}</strong>
+                </div>
+              </div>
+
+              {isEdgeCapturing && <div className="megabin-edge-note">Importing the Samsung-authorized desktop session into Megabin Edge...</div>}
+
+              {edgeCaptureError && <div className="megabin-edge-error">{edgeCaptureError}</div>}
+
+              {!edgeCaptureError && edgeHealth.status === 'offline' && (
+                <div className="megabin-edge-note">
+                  Start the local PoC stack on the Samsung laptop with <code>start.bat</code>, then come back here.
+                </div>
+              )}
+
+              {!edgeCaptureError && edgeHealth.status === 'online' && !edgeHealth.windowsReady && (
+                <div className="megabin-edge-note">
+                  Megabin Edge is reachable, but this machine is not reporting a Windows-authorized Office environment yet.
+                </div>
+              )}
             </div>
           </div>
 
@@ -682,8 +1035,8 @@ export default function AgentWorkspace() {
                 <strong>Second-window ready</strong>
               </div>
               <div>
-                <span>Agent model</span>
-                <strong>Derived-output proxy</strong>
+                <span>Ingress</span>
+                <strong>{edgeReady ? 'Samsung Edge ready' : 'Browser fallback ready'}</strong>
               </div>
             </div>
           </div>
@@ -811,6 +1164,14 @@ export default function AgentWorkspace() {
                 <strong>{telemetry.session.classification}</strong>
               </div>
               <div>
+                <span>Source</span>
+                <strong>{telemetry.session.sourceLabel}</strong>
+              </div>
+              <div>
+                <span>Ingress adapter</span>
+                <strong>{telemetry.session.edgeAdapter || 'browser-upload'}</strong>
+              </div>
+              <div>
                 <span>Compliance checks</span>
                 <strong>{verifiedControls}/4 verified</strong>
               </div>
@@ -863,7 +1224,11 @@ export default function AgentWorkspace() {
         <section className="megabin-chat-stage">
           <div className="megabin-chat-banner">
             <Bot size={18} />
-            <span>Megabin is active. Queries pass through the DLP broker before the LLM Gateway sees them.</span>
+            <span>
+              {telemetry.session.edgeSessionId
+                ? 'Megabin Edge is attached to the Samsung-authorized local document session. Queries stay governed before derived output reaches the LLM path.'
+                : 'Megabin is active. Queries pass through the DLP broker before the LLM Gateway sees them.'}
+            </span>
           </div>
 
           <div className="megabin-chat-feed">

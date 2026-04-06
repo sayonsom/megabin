@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "edge:start": "node cli/edge/server.js",
+    "edge:doctor": "node cli/edge/server.js --doctor"
   },
   "dependencies": {
     "@sentry/react": "^10.46.0",
